@@ -17,6 +17,7 @@ class Player(pygame.sprite.Sprite):
         self.speedy = 0 
 
     def update(self):
-        
 
 
+
+print(1)
