@@ -20,4 +20,4 @@ class Player(pygame.sprite.Sprite):
 
 
 
-print(1)
+print(3)
