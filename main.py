@@ -1,6 +1,6 @@
 import pygame
-from Constantes import *
-from game_screen import game_screen
+from Constantes import WIDTH, HEIGHT, INIT, INSTRUCOES, GAME, QUIT, GAME_2
+from game_screen_1 import game_screen, game_screen_2
 from init_screen import tela_inicial
 from instrucoes import regras
 
@@ -15,10 +15,12 @@ state = INIT
 while state != QUIT:
     if state == INIT:
         state = tela_inicial(window)
-    if state == INSTRUCOES:
+    elif state == INSTRUCOES:
         state = regras(window)
     elif state == GAME:
         state = game_screen(window)
+    elif state == GAME_2:
+        state = game_screen_2(window)
     else:
         state = QUIT
 

@@ -27,10 +27,3 @@ def regras(window):
                     return INIT
         pygame.display.update()
         clock.tick(240)
-
-#if qualquer tecla do dash la:
-#    if a tecla pra tas:
-#        dash=-dash
-#        pos+=dash
-#    else:
-#        pos+=dash
