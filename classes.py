@@ -27,10 +27,10 @@ class Player(pygame.sprite.Sprite):
         self.state = STILL
         #para o cooldown das magias e do dash e do dano
         self.fire_spell_cooldown = 1000
-        self.last_shot = pygame.time.get_ticks()
+        self.last_shot = 0
         self.dash_cooldown = 5000
-        self.last_dash = pygame.time.get_ticks()
-        self.last_blue_fire_spell = pygame.time.get_ticks()
+        self.last_dash = 0
+        self.last_blue_fire_spell = 0
         self.blue_cooldown = 10000
         self.last_damage = pygame.time.get_ticks()
         self.damage_cooldown = 500
@@ -122,7 +122,7 @@ class Player(pygame.sprite.Sprite):
                 all_blue_fire_magic.add(magia)
     def take_damage(self, damage):
         now = pygame.time.get_ticks()
-        if now - self.last_damage > self.dash_cooldown:
+        if now - self.last_damage > self.damage_cooldown:
             self.lives -= damage
 
 class Magias(pygame.sprite.Sprite):
@@ -163,12 +163,21 @@ class Inimigos(pygame.sprite.Sprite):
 
         self.rect.x += self.speedx
 
-class gauss(pygame.sprite.Sprite):
+class Gauss(pygame.sprite.Sprite):
     def __init__(self, img, x, player):
         pygame.sprite.Sprite.__init__(self)
         #imagem e localizacao
         img = pygame.transform.scale(img, (GAUSS_WIDTH, GAUSS_HEIGHT))
+        self.player = player
         self.image = img
         self.rect = img.get_rect()
         self.rect.centerx = x
         self.life = 1000
+
+class Life_bar(pygame.sprite.Sprite):
+    def __init__(self, player):
+        pygame.sprite.Sprite.__init__(self)
+        self.player = player
+        self.rect = pygame.Rect((0,0), (200,50))
+    def update(self):
+        self.rect= pygame.Rect((0,0),((self.player.lives*2)//10,50))

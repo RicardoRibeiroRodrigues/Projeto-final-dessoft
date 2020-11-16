@@ -14,6 +14,8 @@ def game_screen(janela):  #funcao para a janela do jogo
     BACKGROUND = assets["HIMALAIA_IMG"]
     BACKGROUND_RECT = BACKGROUND.get_rect()
     player = Player(assets)
+    #Cria a barra de vida
+    barra_de_vida = Life_bar(player)
     #Adiciona o player ao grupo de todos os sprites e ao grupo do player
     all_sprites.add(player)
     all_players.add(player)
@@ -40,9 +42,9 @@ def game_screen(janela):  #funcao para a janela do jogo
                     player.walk_right()
                 if event.key == pygame.K_f:
                     player.dash()
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_x:
                     player.cast_fire_spell()
-                if event.key == pygame.K_l:
+                if event.key == pygame.K_c:
                     player.cast_blue_flame_spell()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -70,9 +72,11 @@ def game_screen(janela):  #funcao para a janela do jogo
             break
         #Faz o update dos componentes do jogo.       
         all_sprites.update()
+        barra_de_vida.update()
         #desenha os elementos na tela.
         janela.fill(BLACK)
         janela.blit(BACKGROUND,BACKGROUND_RECT)
+        pygame.draw.rect(janela, RED, barra_de_vida.rect)
         all_sprites.draw(janela)
         pygame.display.flip()
     return state
@@ -116,9 +120,9 @@ def game_screen_2(janela):
                     player.walk_right()
                 if event.key == pygame.K_f:
                     player.dash()
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_x:
                     player.cast_fire_spell()
-                if event.key == pygame.K_l:
+                if event.key == pygame.K_c:
                     player.cast_blue_flame_spell()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -183,9 +187,9 @@ def game_screen_3(janela):
                     player.walk_right()
                 if event.key == pygame.K_f:
                     player.dash()
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_x:
                     player.cast_fire_spell()
-                if event.key == pygame.K_l:
+                if event.key == pygame.K_c:
                     player.cast_blue_flame_spell()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
