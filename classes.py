@@ -30,8 +30,8 @@ class Player(pygame.sprite.Sprite):
         self.last_shot = pygame.time.get_ticks()
         self.dash_cooldown = 5000
         self.last_dash = pygame.time.get_ticks()
-        self.last_lightning_spell = pygame.time.get_ticks()
-        self.light_cooldown = 10000
+        self.last_blue_fire_spell = pygame.time.get_ticks()
+        self.blue_cooldown = 10000
         self.last_damage = pygame.time.get_ticks()
         self.damage_cooldown = 500
         #Vida inicial do player
@@ -98,24 +98,28 @@ class Player(pygame.sprite.Sprite):
                 all_sprites.add(magia)
                 all_fire_magic.add(magia)
             else:
-                magia = Magias(self.assets["MAGIA_FOGO_IMG"], self.rect.right, self.rect.top, -10)
+                img = self.assets["MAGIA_FOGO_IMG"]
+                img = pygame.transform.flip(img, True, False)
+                magia = Magias(img, self.rect.right, self.rect.top, -10)
                 all_sprites.add(magia)
                 all_fire_magic.add(magia)
-    def cast_lightning_spell(self):
+    def cast_blue_flame_spell(self):
         now = pygame.time.get_ticks()
-        elapsed_ticks = now - self.last_lightning_spell
+        elapsed_ticks = now - self.last_blue_fire_spell
         #cria a magia 
-        if elapsed_ticks > self.light_cooldown:
-            self.last_lightning_spell = now
+        if elapsed_ticks > self.blue_cooldown:
+            self.last_blue_fire_spell = now
             #cria a magia na direcao que esta olhando
             if self.facing_way == RIGHT: 
-                magia = Magias(self.assets["MAGIA_RAIO_IMG"], self.rect.right, self.rect.top, 10)
+                magia = Magias(self.assets["MAGIA_FOGO_AZUL_IMG"], self.rect.right, self.rect.top, 10)
                 all_sprites.add(magia)
-                all_lightning_magic.add(magia)
+                all_blue_fire_magic.add(magia)
             else:
-                magia = Magias(self.assets["MAGIA_RAIO_IMG"], self.rect.right, self.rect.top, -10)
+                img = self.assets["MAGIA_FOGO_AZUL_IMG"]
+                img = pygame.transform.flip(img, True, False)
+                magia = Magias(img , self.rect.right, self.rect.top, -10)
                 all_sprites.add(magia)
-                all_lightning_magic.add(magia)
+                all_blue_fire_magic.add(magia)
     def take_damage(self, damage):
         now = pygame.time.get_ticks()
         if now - self.last_damage > self.dash_cooldown:
@@ -159,4 +163,12 @@ class Inimigos(pygame.sprite.Sprite):
 
         self.rect.x += self.speedx
 
-
+class gauss(pygame.sprite.Sprite):
+    def __init__(self, img, x, player):
+        pygame.sprite.Sprite.__init__(self)
+        #imagem e localizacao
+        img = pygame.transform.scale(img, (GAUSS_WIDTH, GAUSS_HEIGHT))
+        self.image = img
+        self.rect = img.get_rect()
+        self.rect.centerx = x
+        self.life = 1000

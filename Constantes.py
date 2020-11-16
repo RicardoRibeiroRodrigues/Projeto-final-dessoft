@@ -6,6 +6,8 @@ PLAYER_WIDTH = 100
 PLAYER_HEIGHT = 160
 ENEMIES_WIDTH = 100
 ENEMIES_HEIGHT = 160
+GAUSS_WIDTH = 300
+GAUSS_HEIGHT = 480
 GRAVITY = 1
 JUMP_SIZE = 22
 DASH_SIZE = 150
@@ -35,12 +37,9 @@ FALLING = 2
 #Cria o grupo de todos os sprites
 all_sprites = pygame.sprite.Group()
 all_fire_magic = pygame.sprite.Group()
-all_lightning_magic = pygame.sprite.Group()
+all_blue_fire_magic = pygame.sprite.Group()
 all_enemies = pygame.sprite.Group()
 all_players = pygame.sprite.Group()
 #lados para o personagem ir
 RIGHT = 1
 LEFT = 0
-
-
-
