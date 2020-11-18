@@ -11,6 +11,9 @@ class Botoes_instrucoes():
 def regras(window):
     font=pygame.font.Font('freesansbold.ttf', 32)
     clock = pygame.time.Clock()
+    pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')
+    pygame.mixer.music.set_volume(0.4)
+    pygame.mixer.music.play(loops=-1)
     while True:
         window.fill((0,0,0))
         cor = (0, 255, 0)

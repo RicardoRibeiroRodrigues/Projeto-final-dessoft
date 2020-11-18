@@ -4,8 +4,12 @@ pygame.init()
 
 def tela_inicial(window):                                                   #funcão do menu
     font=pygame.font.Font('freesansbold.ttf', 32)                           #funto dos textos dentro da tela
-    a=(0,0,0)
-    clock = pygame.time.Clock()                                                               #cor q é a tela
+    a=(0,0,0)                                                               #cor q é a tela -- preto
+    clock = pygame.time.Clock()
+    #musica de fundo
+    pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')
+    pygame.mixer.music.set_volume(0.4)
+    pygame.mixer.music.play(loops=-1)
     while True:                                                             #loop principal do menu
         window.fill(a)                                                      #preenche  tela com a cor definida em a
         cor=(0, 255, 0)                                                     #cor dos escritos

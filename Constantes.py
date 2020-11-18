@@ -1,4 +1,5 @@
 import pygame
+#tamanhos
 WIDTH = 1200  #largura da tela
 HEIGHT = 652 #altura da tela
 FPS = 120    #frames por segundo
@@ -8,6 +9,9 @@ ENEMIES_WIDTH = 100
 ENEMIES_HEIGHT = 160
 GAUSS_WIDTH = 300
 GAUSS_HEIGHT = 480
+PLATAFORM_WIDTH = 500
+PLATAFORM_HEIGHT = 100
+#Valores do pulo, gravidade e localização do chão
 GRAVITY = 1
 JUMP_SIZE = 22
 DASH_SIZE = 150
@@ -40,6 +44,7 @@ all_fire_magic = pygame.sprite.Group()
 all_blue_fire_magic = pygame.sprite.Group()
 all_enemies = pygame.sprite.Group()
 all_players = pygame.sprite.Group()
+all_plataforms = pygame.sprite.Group()
 #lados para o personagem ir
 RIGHT = 1
 LEFT = 0
