@@ -15,33 +15,45 @@ def load_assets():
     assets["MAGIA_FOGO_AZUL_IMG"] = pygame.image.load("assets\Img\Magia_fogo_azul.png").convert_alpha()
     assets["ENEMIES_IMG"] = pygame.image.load("assets\Img\Inimigos.png").convert_alpha()
     assets["FIREBALL_SOUND"] = pygame.mixer.Sound("assets\Sounds\Bola_de_fogo.wav")
+    assets["PLATAFORM_IMG"] = pygame.image.load("assets\Img\Plataforma.png").convert_alpha()
     return assets
 
 def game_screen(janela):  #funcao para a janela do jogo
     """Função para a primeira tela da primeira fase do jogo, retorna o proximo estado do jogo"""
     #Musica de fundo
     pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')
-    pygame.mixer.music.set_volume(0.4)
+    pygame.mixer.music.set_volume(0.1)
     pygame.mixer.music.play(loops=-1)
     #variavel para controlar o FPS
     clock = pygame.time.Clock()
+    #Define a fonte para a escrita na tela
+    fonte = pygame.font.Font('freesansbold.ttf', 32)              
     #carrega os assets 
     assets = load_assets()
     #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
     BACKGROUND = assets["HIMALAIA_IMG"]
+    BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
     BACKGROUND_RECT = BACKGROUND.get_rect()
-    player = Player(assets)
+    player = Player(assets, all_plataforms)
     #Cria a barra de vida
     barra_de_vida = Life_bar(player)
+    #Cria as plataformas
+    #posicoes possiveis da parte esquerda da plataforma e parte superior da plataforma.
+    pos_x = [300, (300 + PLATAFORM_WIDTH + 20)]
+    pos_y = [ (GROUND - WIDTH//5) , ((GROUND - WIDTH//2.5))]
+    #Criação das plataformas
+    for posição_x in pos_x:
+        for posição_y in pos_y: 
+            plataformas = Plataform(assets["PLATAFORM_IMG"], posição_x, posição_y)
+            all_plataforms.add(plataformas)
+            all_sprites.add(plataformas)
+            #Cria o inimigo em cima da plataforma
+            inimigo = Inimigos(assets["ENEMIES_IMG"], posição_x, posição_y, player, all_plataforms)
+            all_sprites.add(inimigo)
+            all_enemies.add(inimigo)
     #Adiciona o player ao grupo de todos os sprites e ao grupo do player
     all_sprites.add(player)
     all_players.add(player)
-    #cria os inimigos
-    for i in range(3):
-        x = random.randint(0, 1200)
-        inimigo = Inimigos(assets["ENEMIES_IMG"], x, player)
-        all_sprites.add(inimigo)
-        all_enemies.add(inimigo)
     state = PLAYING
     while state != QUIT:
         #Limita o FPS
@@ -59,7 +71,7 @@ def game_screen(janela):  #funcao para a janela do jogo
                     player.walk_right()
                 if event.key == pygame.K_f:
                     player.dash()
-                if event.key == pygame.K_x:
+                if event.key == pygame.K_SPACE:
                     player.cast_fire_spell()
                 if event.key == pygame.K_c:
                     player.cast_blue_flame_spell()
@@ -92,11 +104,16 @@ def game_screen(janela):  #funcao para a janela do jogo
         barra_de_vida.update()
         #desenha os elementos na tela.
         janela.fill(BLACK)
-        janela.blit(BACKGROUND,BACKGROUND_RECT)
+        janela.blit(BACKGROUND, BACKGROUND_RECT)
+
         all_sprites.draw(janela)
         #desenha a barra de vida do personagem
         pygame.draw.rect(janela, BLACK, pygame.Rect((10,5),(220,60)))
         pygame.draw.rect(janela, RED, barra_de_vida.rect)
+        # texto_Barra_de_vida = fonte.render("Vida", True, BLACK, WHITE)
+        # texto_barra_de_vida_ret = texto_Barra_de_vida.get_rect()
+        # texto_barra_de_vida_ret.Rect.left = 0
+        # texto_barra_de_vida_ret.Rect.top = 0
         pygame.display.flip()
     return state
 
@@ -111,11 +128,15 @@ def game_screen_2(janela):
     clock = pygame.time.Clock()
     #carrega os assets 
     assets = load_assets()
+    #Cria as plataformas
+    plataformas = Plataform(assets["PLATAFORM_IMG"])
+    all_plataforms.add(plataformas)
+    all_sprites.add(plataformas)
     #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
     BACKGROUND = assets["HIMALAIA_TEMPLE_IMG"]
     BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
     BACKGROUND_RECT = BACKGROUND.get_rect()
-    player = Player(assets)
+    player = Player(assets, all_plataforms)
     #Cria a barra de vida
     barra_de_vida = Life_bar(player)
     #Adiciona o player ao grupo de todos os sprites e ao grupo do player e remove os sprites da tela passada
@@ -146,7 +167,7 @@ def game_screen_2(janela):
                     player.walk_right()
                 if event.key == pygame.K_f:
                     player.dash()
-                if event.key == pygame.K_x:
+                if event.key == pygame.K_SPACE:
                     player.cast_fire_spell()
                 if event.key == pygame.K_c:
                     player.cast_blue_flame_spell()
@@ -196,11 +217,15 @@ def game_screen_3(janela):
     clock = pygame.time.Clock()
     #carrega os assets 
     assets = load_assets()
+    #Cria as plataformas
+    plataformas = Plataform(assets["PLATAFORM_IMG"])
+    all_plataforms.add(plataformas)
+    all_sprites.add(plataformas)
     #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
     BACKGROUND = assets["TEMPLO_LUTA_IMG"]
     BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
     BACKGROUND_RECT = BACKGROUND.get_rect()
-    player = Player(assets)
+    player = Player(assets, all_plataforms)
     #Cria a barra de vida
     barra_de_vida = Life_bar(player)
     #Adiciona o player ao grupo de todos os sprites e ao grupo do player e remove os sprites da tela passada
@@ -225,7 +250,7 @@ def game_screen_3(janela):
                     player.walk_right()
                 if event.key == pygame.K_f:
                     player.dash()
-                if event.key == pygame.K_x:
+                if event.key == pygame.K_SPACE:
                     player.cast_fire_spell()
                 if event.key == pygame.K_c:
                     player.cast_blue_flame_spell()

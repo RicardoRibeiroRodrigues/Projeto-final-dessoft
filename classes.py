@@ -4,7 +4,7 @@ pygame.init()
 pygame.mixer.init()
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, assets):
+    def __init__(self, assets, grupos_plataformas):
         pygame.sprite.Sprite.__init__(self)
         #carrega a imagem e configura ela
         self.assets = assets
@@ -13,7 +13,8 @@ class Player(pygame.sprite.Sprite):
             RIGHT: img,
             LEFT: pygame.transform.flip(img, True, False),
         }
-        # self.plataforms = plataformas
+        #Plataformas
+        self.plataforms = grupos_plataformas
         #define o lado que esta olhando
         self.facing_way = RIGHT
         #atualiza imagem
@@ -52,14 +53,39 @@ class Player(pygame.sprite.Sprite):
             #atualiza do estado 
             self.state = STILL
         #Para ficar na plataforma
-        # hits  =
-        #atualiza a posicao
-        self.rect.centerx += self.speedx
-        #Para nao sair do mapa
-        if self.rect.x > WIDTH:
-            self.rect.x = WIDTH - PLAYER_WIDTH
-        if self.rect.x + PLAYER_WIDTH < 0:
-            self.rect.x = 0 - PLAYER_WIDTH // 4
+        collisions = pygame.sprite.spritecollide(self, self.plataforms , False)
+        #Corrige a posição do player pra antes da colisão
+        for collision in collisions:
+            # Estava indo para baixo
+            if self.speedy > 0:
+                self.rect.bottom = collision.rect.top
+                # Se colidiu com algo, para de cair
+                self.speedy = 0
+                # Atualiza o estado para parado
+                self.state = STILL
+        #Ultrapassa a plataforma, se estiver indo para cima, mas nao se estiver caindo.
+        if self.speedy > 0:  # Está indo para baixo
+            collisions = pygame.sprite.spritecollide(self, self.plataforms, False)
+            # Para cada tile de plataforma que colidiu com o personagem
+            # verifica se ele estava aproximadamente na parte de cima
+            for platform in collisions:
+                # Verifica se a altura alcançada durante o pulo está acima da
+                # plataforma.
+                if self.highest_y <= platform.rect.top:
+                    self.rect.bottom = platform.rect.top
+                    # Atualiza a altura no mapa
+                    self.highest_y = self.rect.bottom
+                    # Para de cair
+                    self.speedy = 0
+                    # Atualiza o estado para parado
+                    self.state = STILL
+        #Atualiza a posição do eixo x.
+        self.rect.x += self.speedx
+        # Corrige a posição caso tenha passado do tamanho da janela
+        if self.rect.left < 0:
+            self.rect.left = 0
+        elif self.rect.right >= WIDTH:
+            self.rect.right = WIDTH - 1
     #Metodo para pular
     def jump(self):
         """Método para o personagem pular"""
@@ -161,25 +187,87 @@ class Magias(pygame.sprite.Sprite):
             self.kill()
 
 class Inimigos(pygame.sprite.Sprite):
-    def __init__(self, img, x, player):
+    def __init__(self, img, x, y , player, Plataformas):
         pygame.sprite.Sprite.__init__(self)
         #Muda a imagem pro tamanho do inimigo e pega o retangulo dela.
         img = pygame.transform.scale(img, (ENEMIES_WIDTH, ENEMIES_HEIGHT))
-        self.image = img
         self.rect = img.get_rect()
-        self.rect.bottom = GROUND
+        #Pode virar para direita e para esquerda
+        self.imgs = {
+            RIGHT: img,
+            LEFT: pygame.transform.flip(img, True, False),
+        }
+        #Olha para direita por padrão
+        self.facing_way = RIGHT
+        #vira a imagem para onde está olhando
+        self.image = self.imgs[self.facing_way]
+        #Atributo plataforma, para ficar na plataforma.
+        self.plataforms = Plataformas
+        #Posições iniciais dele
+        self.rect.bottom = y
         self.rect.x = x
+        #Velocidade iniciais
+        self.speedy = 0
         self.speedx = 0
+        #passa o player para os inimigos
         self.player = player
+        #Vida dos inimigos
         self.lives = 20
+        #Estado inicial
+        self.state = STILL
     def update(self):
+        #Sofrem ação da gravidade
+        self.speedy += GRAVITY
+        #se tiver caindo, muda o estado para caindo
+        if self.speedy > 0:
+            self.state = FALLING
+        self.rect.y += self.speedy
+        #Ao chegar ao chao para de cair
+        if self.rect.bottom > GROUND:
+            self.rect.bottom = GROUND #volta para o nível do chão
+            #para de cair
+            self.speedy = 0
+            #atualiza do estado 
+            self.state = STILL
         # Atualiza velocidade para ir em direção ao jogador
         if self.player.rect.centerx < self.rect.centerx:
+            #Anda para esquerda, vira para esquerda
             self.speedx = -2
+            self.facing_way = LEFT
         else:
+            #Anda para direia, vira para direita
             self.speedx = 2
-
+            self.facing_way = RIGHT
+        #Atualizações de posição.
         self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        #Para ficar na plataforma
+        collisions = pygame.sprite.spritecollide(self, self.plataforms , False)
+        #Corrige a posição do player pra antes da colisão
+        for collision in collisions:
+            # Estava indo para baixo
+            if self.speedy > 0:
+                self.rect.bottom = collision.rect.top
+                # Se colidiu com algo, para de cair
+                self.speedy = 0
+                # Atualiza o estado para parado
+                self.state = STILL
+        #Ultrapassa a plataforma, se estiver indo para cima, mas nao se estiver caindo.
+        if self.speedy > 0:  # Está indo para baixo
+            collisions = pygame.sprite.spritecollide(self, self.plataforms, False)
+            # Para cada tile de plataforma que colidiu com o personagem
+            # verifica se ele estava aproximadamente na parte de cima
+            for platform in collisions:
+                # Verifica se a altura alcançada durante o pulo está acima da
+                # plataforma.
+                if self.highest_y <= platform.rect.top:
+                    self.rect.bottom = platform.rect.top
+                    # Atualiza a altura no mapa
+                    self.highest_y = self.rect.bottom
+                    # Para de cair
+                    self.speedy = 0
+                    # Atualiza o estado para parado
+                    self.state = STILL
 
 class Gauss(pygame.sprite.Sprite):
     def __init__(self, img, x, player):
@@ -205,12 +293,12 @@ class Life_bar(pygame.sprite.Sprite):
 
 
 class Plataform(pygame.sprite.Sprite):
-    def __init__(self, img, player):
+    def __init__(self, img, x, y):
         pygame.sprite.Sprite.__init__(self)
         #imagem
         img = pygame.transform.scale(img, (PLATAFORM_WIDTH, PLATAFORM_HEIGHT))
         self.image = img
         #localizacao
         self.rect = img.get_rect()
-        self.rect.x = WIDTH//2
-        self.rect.bottom = (GROUND + JUMP_SIZE) - 20
+        self.rect.left = x
+        self.rect.top = y 

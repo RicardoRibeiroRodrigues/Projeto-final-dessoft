@@ -16,9 +16,9 @@ def regras(window):
     pygame.mixer.music.play(loops=-1)
     while True:
         window.fill((0,0,0))
-        cor = (0, 255, 0)
+        VERDE = (0, 255, 0)
         texto_voltar=Botoes_instrucoes(font, window, ((WIDTH*10) // 10)-100, HEIGHT -50, 'Voltar')
-        texto_espaco = Botoes_instrucoes(font, window, WIDTH-1000, ((HEIGHT-100)/6), 'X')
+        texto_espaco = Botoes_instrucoes(font, window, WIDTH-1000, ((HEIGHT-100)/6), 'Espaço')
         texto_C = Botoes_instrucoes(font, window, WIDTH-1000, ((HEIGHT-100)/6)*2, 'C')
         texto_UP = Botoes_instrucoes(font, window, WIDTH-1000, ((HEIGHT-100)/6)*3, 'UP')
         texto_F = Botoes_instrucoes(font, window, WIDTH-1000, ((HEIGHT-100)/6)*4, 'F')

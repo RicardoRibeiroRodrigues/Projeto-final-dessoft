@@ -1,24 +1,25 @@
 import pygame
 #tamanhos
 WIDTH = 1200  #largura da tela
-HEIGHT = 652 #altura da tela
+HEIGHT = 800 #altura da tela
 FPS = 120    #frames por segundo
-PLAYER_WIDTH = 100
-PLAYER_HEIGHT = 160
-ENEMIES_WIDTH = 100
-ENEMIES_HEIGHT = 160
+RATE = 0.70
+PLAYER_WIDTH = int(100*RATE)
+PLAYER_HEIGHT = int(160*RATE)
+ENEMIES_WIDTH = int(100*RATE)
+ENEMIES_HEIGHT = int(160*RATE)
 GAUSS_WIDTH = 300
 GAUSS_HEIGHT = 480
-PLATAFORM_WIDTH = 500
-PLATAFORM_HEIGHT = 100
+PLATAFORM_WIDTH = int(364*0.9)
+PLATAFORM_HEIGHT = int(136*RATE)
 #Valores do pulo, gravidade e localização do chão
 GRAVITY = 1
-JUMP_SIZE = 22
+JUMP_SIZE = 18
 DASH_SIZE = 150
-GROUND = (HEIGHT * 5 )// 6
+GROUND = HEIGHT - 96
 #Tamanho das magias
-SPELL_WIDTH = 60
-SPELL_HEIGHT = 60
+SPELL_WIDTH = int(60*RATE)
+SPELL_HEIGHT = int(60*RATE)
 #cores basicas
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)

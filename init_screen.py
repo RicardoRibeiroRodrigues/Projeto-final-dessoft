@@ -14,7 +14,7 @@ def tela_inicial(window):                                                   #fun
         window.fill(a)                                                      #preenche  tela com a cor definida em a
         cor=(0, 255, 0)                                                     #cor dos escritos
         texto_jogar=font.render('JOGAR', True, cor, (0, 0, 0))              #cria o texto_jogar
-        textoRect_jogar=texto_jogar.get_rect()                              #pega a hit-box do texto_jogar
+        textoRect_jogar = texto_jogar.get_rect()                              #pega a hit-box do texto_jogar
         textoRect_jogar.center = (100, 600)                                 #posiciona o texto_jogar
         texto_instrucoes=font.render('INSTRUÇÕES', True, cor, (0, 0, 0))    #cria o texto_instrucoes
         textoRect_instrucoes=texto_instrucoes.get_rect()                    #pega a hitbox do texto_instrcoes
