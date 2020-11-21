@@ -1,5 +1,6 @@
 import pygame
 from Constantes import *
+from random import choice
 pygame.init()
 pygame.mixer.init()
 
@@ -106,21 +107,21 @@ class Player(pygame.sprite.Sprite):
     #metodo para andar pra direita  
     def walk_right(self):
         """Método para andar para direita e definir o lado que o personagem está olhando"""
-        self.speedx += 10
+        self.speedx += 5
         self.facing_way = RIGHT
     #metodo para andar pra esquerda
     def stop_walk_right(self):
         """Método para o personagem parar de andar para direita"""
-        self.speedx -= 10
+        self.speedx -= 5
     #metodo pra andar pra esquerda
     def walk_left(self):
         """Método para esquerda para direita e definir o lado que o personagem está olhando"""
-        self.speedx -= 10
+        self.speedx -= 5
         self.facing_way = LEFT
     #Metodo para parar de andar pra esquerda
     def stop_walk_left(self):
         """Método para o personagem parar de andar para esquerda"""
-        self.speedx += 10
+        self.speedx += 5
     def cast_fire_spell(self):
         """Método para o personagem lançar a magia de fogo para a direção que está olhando"""
         #Para fazer o cooldown
@@ -138,7 +139,7 @@ class Player(pygame.sprite.Sprite):
             else:
                 img = self.assets["MAGIA_FOGO_IMG"]
                 img = pygame.transform.flip(img, True, False)
-                magia = Magias(img, self.rect.right, self.rect.top, -10)
+                magia = Magias(img, self.rect.left, self.rect.top, -10)
                 all_sprites.add(magia)
                 all_fire_magic.add(magia)
                 #Adiciona o som para a magia
@@ -160,7 +161,7 @@ class Player(pygame.sprite.Sprite):
                 #vira a magia para ela ir para o lado certo
                 img = self.assets["MAGIA_FOGO_AZUL_IMG"]
                 img = pygame.transform.flip(img, True, False)
-                magia = Magias(img , self.rect.right, self.rect.top, -10)
+                magia = Magias(img , self.rect.left, self.rect.top, -10)
                 all_sprites.add(magia)
                 all_blue_fire_magic.add(magia)
     def take_damage(self, damage):
@@ -187,9 +188,10 @@ class Magias(pygame.sprite.Sprite):
             self.kill()
 
 class Inimigos(pygame.sprite.Sprite):
-    def __init__(self, img, x, y , player, Plataformas):
+    def __init__(self, img, assets, x, y , player, Plataformas):
         pygame.sprite.Sprite.__init__(self)
         #Muda a imagem pro tamanho do inimigo e pega o retangulo dela.
+        self.assets = assets #recebe assets
         img = pygame.transform.scale(img, (ENEMIES_WIDTH, ENEMIES_HEIGHT))
         self.rect = img.get_rect()
         #Pode virar para direita e para esquerda
@@ -215,6 +217,9 @@ class Inimigos(pygame.sprite.Sprite):
         self.lives = 20
         #Estado inicial
         self.state = STILL
+        #Cooldown da magia do inimigo
+        self.last_attack = 0
+        self.attack_cooldown = 1000
     def update(self):
         #Sofrem ação da gravidade
         self.speedy += GRAVITY
@@ -268,7 +273,29 @@ class Inimigos(pygame.sprite.Sprite):
                     self.speedy = 0
                     # Atualiza o estado para parado
                     self.state = STILL
+    def attack(self):
+        #self, img, right_x , centery, speedx
+        #cooldown da magia
+        chances = [0]*50
+        chances.append(1)
+        numero = choice(chances)
+        now = pygame.time.get_ticks()
+        elapsed_ticks = now - self.last_attack
+        if elapsed_ticks > self.attack_cooldown and numero == 1:
+            #Se está olhando para direita, atira para direita
+            if self.facing_way == RIGHT:
+                ataque = Magias(self.assets["MAGIA_GELO_IMG"], self.rect.right, self.rect.centery, 10)
+                all_enemies_projectiles.add(ataque)
+                all_sprites.add(ataque)
+                self.last_attack = now
+            #Se não, atira para esquerda
+            else:
+                ataque = Magias(self.assets["MAGIA_GELO_IMG"], self.rect.left, self.rect.centery, -10)
+                all_enemies_projectiles.add(ataque)
+                all_sprites.add(ataque)
+                self.last_attack = now
 
+        
 class Gauss(pygame.sprite.Sprite):
     def __init__(self, img, x, player):
         pygame.sprite.Sprite.__init__(self)
