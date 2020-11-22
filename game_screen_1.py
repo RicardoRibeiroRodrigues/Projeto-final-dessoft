@@ -8,8 +8,10 @@ pygame.mixer.init()
 def load_assets():
     """Função para o carregamento dos assets usados no jogo em um dicionário."""
     assets = {}
+    #Para o jogo
     assets["PLAYER_IMG"] = pygame.image.load("assets\Img\Personagem.png").convert_alpha()
     assets["HIMALAIA_IMG"] = pygame.image.load("assets\Img\Himalaia.png").convert()
+    assets["TEMPLO_GAUSS_IMG"] = pygame.image.load("assets\Img\Templo_gauss.png").convert()
     assets["MONTANHA_IMG"] = pygame.image.load("assets\Img\Imagem_tela2.png").convert()
     assets["MAGIA_FOGO_IMG"] = pygame.image.load("assets\Img\Bola_de_fogo.png").convert_alpha()
     assets["MAGIA_FOGO_AZUL_IMG"] = pygame.image.load("assets\Img\Magia_fogo_azul.png").convert_alpha()
@@ -17,6 +19,17 @@ def load_assets():
     assets["FIREBALL_SOUND"] = pygame.mixer.Sound("assets\Sounds\Bola_de_fogo.wav")
     assets["PLATAFORM_IMG"] = pygame.image.load("assets\Img\Plataforma.png").convert_alpha()
     assets["MAGIA_GELO_IMG"] = pygame.image.load("assets\Img\Magia_Gelo.png").convert_alpha()
+    assets["MAGIA_FORMULA"] = pygame.image.load("assets\Img\Magia_gauss.png").convert_alpha()
+    assets["GAUSS"] = pygame.image.load("assets\Img\Boss_temp.png").convert_alpha()
+    #Para as telas de historia, iniciais e de intruções.
+    assets["INTRO_HIST"] = pygame.image.load("assets\Img\Historia\Intro_hist.png").convert()
+    assets["PRIMEIRA_HIST"] = pygame.image.load("assets\Img\Historia\primeira_hist.png").convert()
+    assets["SEGUNDA_HIST"] = pygame.image.load("assets\Img\Historia\segunda_hist.png").convert()
+    assets["TERCEIRA_HIST"] = pygame.image.load("assets\Img\Historia\Rterceira_hist.png").convert()
+    assets["QUARTA_HIST"] = pygame.image.load("assets\Img\Historia\quarto_hist.png").convert()
+    assets["QUINTA_HIST"] = pygame.image.load("assets\Img\Historia\quinto_hist.png").convert()
+    assets["SEXTA_HIST"] = pygame.image.load("assets\Img\Historia\sexto_hist.png").convert()
+    assets["SETIMA_HIST"] = pygame.image.load("assets\Img\Historia\setimo_hist.png").convert()
     return assets
 
 def game_screen(janela):  #funcao para a janela do jogo
@@ -29,9 +42,9 @@ def game_screen(janela):  #funcao para a janela do jogo
     clock = pygame.time.Clock()
     #Define a fonte para a escrita na tela
     fonte = pygame.font.Font('freesansbold.ttf', 32)
-    fonte_2 = pygame.font.Font('freesansbold.ttf', 20)
+    fonte_2 = pygame.font.Font('freesansbold.ttf', 25)
     texto_Barra_de_vida = fonte.render("Vida", True, RED)        
-    texto_passagem_tela = fonte.render("Para passar de tela, solte os botões de andar e aperte o p", True, RED)
+    texto_passagem_tela = fonte_2.render("Para passar de tela, solte os botões de andar e aperte o p", True, RED)
     #carrega os assets 
     assets = load_assets()
     #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
@@ -73,8 +86,6 @@ def game_screen(janela):  #funcao para a janela do jogo
                     player.walk_left()
                 if event.key == pygame.K_RIGHT:
                     player.walk_right()
-                if event.key == pygame.K_f:
-                    player.dash()
                 if event.key == pygame.K_SPACE:
                     player.cast_fire_spell()
                 if event.key == pygame.K_c:
@@ -95,16 +106,16 @@ def game_screen(janela):  #funcao para a janela do jogo
         #Colisão dos ataques do inimigo com o player
         hits_enemie_attack_player = pygame.sprite.groupcollide(all_enemies_projectiles,all_players, True, False)
         for hit in hits_enemie_attack_player:
-            player.take_damage(0)
+            player.take_damage(100)
         #Colisão de projeteis -- A magia de fogo se anula com a magia do inimigo, e a magia de fogo azul apenas anula o ataque.
-        hits_fire_enemie_attack = pygame.sprite.groupcollide(all_enemies_projectiles, all_fire_magic, True, True)
-        hits_blue_fire_enemie_attack = pygame.sprite.groupcollide(all_enemies_projectiles, all_blue_fire_magic, True, False)
+        pygame.sprite.groupcollide(all_enemies_projectiles, all_fire_magic, True, True)
+        pygame.sprite.groupcollide(all_enemies_projectiles, all_blue_fire_magic, True, False)
         #Coloca efeitos para os hits, inimigos e player podem morrer
         hits_fire_enemies = pygame.sprite.groupcollide(all_enemies,all_fire_magic, False, True)
         hits_blue_fire_enemies = pygame.sprite.groupcollide(all_enemies,all_blue_fire_magic, False, True)
         #hits_enemie_player = pygame.sprite.groupcollide(all_players, all_enemies, False, False)   #Inativo, o player toma dano apenas de tiros
         for enemie in hits_fire_enemies:
-            enemie.lives -= 10000
+            enemie.lives -= 10
             if enemie.lives <=0:
                 enemie.kill()
         for enemie in hits_blue_fire_enemies:
@@ -122,7 +133,7 @@ def game_screen(janela):  #funcao para a janela do jogo
         all_sprites.draw(janela)
         #Para colocar o texto para proxima tela
         if len(all_enemies) == 0:
-            janela.blit(texto_passagem_tela, (400, 0))
+            janela.blit(texto_passagem_tela, (300, 0))
         #desenha a barra de vida do personagem
         janela.blit(texto_Barra_de_vida, (80, 0))  
         pygame.draw.rect(janela, BLACK, pygame.Rect((10,30),(220,60)))
@@ -141,8 +152,9 @@ def game_screen_2(janela):
     clock = pygame.time.Clock()
     #Define a fonte para a escrita na tela
     fonte = pygame.font.Font('freesansbold.ttf', 32)
-    fonte_2 = pygame.font.Font('freesansbold.ttf', 20)
-    texto_Barra_de_vida = fonte_2.render("Vida", True, RED)
+    fonte_2 = pygame.font.Font('freesansbold.ttf', 25)
+    texto_Barra_de_vida = fonte.render("Vida", True, RED)        
+    texto_passagem_tela = fonte_2.render("Para passar de tela, solte os botões de andar e aperte o p", True, RED)
     #carrega os assets 
     assets = load_assets()
     #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
@@ -188,12 +200,14 @@ def game_screen_2(janela):
                     player.walk_left()
                 if event.key == pygame.K_RIGHT:
                     player.walk_right()
-                if event.key == pygame.K_f:
-                    player.dash()
                 if event.key == pygame.K_SPACE:
                     player.cast_fire_spell()
                 if event.key == pygame.K_c:
                     player.cast_blue_flame_spell()
+                if len(all_enemies) == 0:
+                    if event.key == pygame.K_p:
+                        state = GAME_3
+                        return GAME_3
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     player.stop_walk_left()
@@ -221,8 +235,6 @@ def game_screen_2(janela):
             enemie.lives -= 20
             if enemie.lives <=0:
                 enemie.kill()
-        if len(hits_enemie_player) > 0:
-            player.take_damage(10)
         if player.lives <= 0:
             state = QUIT     
         #Faz o update dos componentes do jogo.       
@@ -232,6 +244,9 @@ def game_screen_2(janela):
         janela.fill(BLACK)
         janela.blit(BACKGROUND,BACKGROUND_RECT)
         all_sprites.draw(janela)
+        #Coloca o texto para passar pra prox tela
+        if len(all_enemies) == 0:
+            janela.blit(texto_passagem_tela, (300, 0))
         #desenha a barra de vida do personagem
         janela.blit(texto_Barra_de_vida, (80, 0))
         pygame.draw.rect(janela, BLACK, pygame.Rect((10,30),(220,60)))
@@ -255,16 +270,19 @@ def game_screen_3(janela):
     #carrega os assets 
     assets = load_assets()
     #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
-    BACKGROUND = assets["TEMPLO_LUTA_IMG"]
+    BACKGROUND = assets["TEMPLO_GAUSS_IMG"]
     BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
     BACKGROUND_RECT = BACKGROUND.get_rect()
     player = Player(assets, all_plataforms)
     #Cria a barra de vida
     barra_de_vida = Life_bar(player)
+    #Cria gauss
+    gauss = Gauss(assets["GAUSS"], assets, player)
     #Adiciona o player ao grupo de todos os sprites e ao grupo do player e remove os sprites da tela passada
     all_plataforms.empty()
     all_players.empty()
     all_sprites.empty()
+    all_sprites.add(gauss)
     all_sprites.add(player)
     all_players.add(player)
     #Cria as plataformas
@@ -277,6 +295,8 @@ def game_screen_3(janela):
             plataformas = Plataform(assets["PLATAFORM_IMG"], posição_x, posição_y)
             all_plataforms.add(plataformas)
             all_sprites.add(plataformas)
+    #loop da tela
+    state = PLAYING
     while state != QUIT:
         #Limita o FPS
         clock.tick(FPS)
@@ -291,8 +311,6 @@ def game_screen_3(janela):
                     player.walk_left()
                 if event.key == pygame.K_RIGHT:
                     player.walk_right()
-                if event.key == pygame.K_f:
-                    player.dash()
                 if event.key == pygame.K_SPACE:
                     player.cast_fire_spell()
                 if event.key == pygame.K_c:
@@ -302,20 +320,7 @@ def game_screen_3(janela):
                     player.stop_walk_left()
                 if event.key == pygame.K_RIGHT:
                     player.stop_walk_right()
-        #Coloca efeitos para os hits, inimigos e player levam dano
-        hits_fire_enemies = pygame.sprite.groupcollide(all_enemies,all_fire_magic, False, True)
-        hits_blue_fire_enemies = pygame.sprite.groupcollide(all_enemies,all_blue_fire_magic, False, True)
-        hits_enemie_player = pygame.sprite.groupcollide(all_players, all_enemies, False, False)
-        for enemie in hits_fire_enemies:
-            enemie.lives -= 10
-            if enemie.lives <=0:
-                enemie.kill()
-        for enemie in hits_blue_fire_enemies:
-            enemie.lives -= 20
-            if enemie.lives <=0:
-                enemie.kill()
-        if len(hits_enemie_player) > 0:
-            player.take_damage(10)
+        #Jogo acaba se o player morre
         if player.lives <= 0:
             state = QUIT     
         #Faz o update dos componentes do jogo.

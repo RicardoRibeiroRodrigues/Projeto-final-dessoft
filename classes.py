@@ -93,17 +93,6 @@ class Player(pygame.sprite.Sprite):
         if self.state == STILL:
             self.speedy -= JUMP_SIZE
             self.state = JUMPING
-    def dash(self): #metodo definido para o player dar dash
-        """Método para o personagem dar dash para o lado que estiver olhando"""
-        now = pygame.time.get_ticks()
-        elapsed_ticks = now - self.last_dash
-        if elapsed_ticks > self.dash_cooldown:
-            self.last_dash = now
-            #dash para direcao em que esta olhando o personagem
-            if self.facing_way == RIGHT:
-                self.rect.centerx += DASH_SIZE
-            else:
-                self.rect.centerx -= DASH_SIZE  
     #metodo para andar pra direita  
     def walk_right(self):
         """Método para andar para direita e definir o lado que o personagem está olhando"""
@@ -309,7 +298,7 @@ class Inimigos(pygame.sprite.Sprite):
                 self.speedy -= JUMP_SIZE
                 self.state = JUMPING
 class Gauss(pygame.sprite.Sprite):
-    def __init__(self, img, player):
+    def __init__(self, img, assets, player):
         pygame.sprite.Sprite.__init__(self)
         #imagem e localizacao
         img = pygame.transform.scale(img, (GAUSS_WIDTH, GAUSS_HEIGHT))
@@ -317,23 +306,28 @@ class Gauss(pygame.sprite.Sprite):
         self.image = img
         self.rect = img.get_rect()
         self.rect.right = WIDTH
+        #Salva os assets
+        self.assets = assets
         #Numero de vidas iniciais
         self.life = 10000
         #Cooldown
         self.last_attack = 0
         self.attack_cd = 3000
-    def update(self):
-        pass
-    # def ataque_normal(self):
-    #     #cooldown da magia 
-    #     now = pygame.time.get_ticks()
-    #     elapsed_ticks = now - self.last_attack
-    #     if elapsed_ticks > self.attack_cd:
-    #         for i range(10):
-    #             #opcoes de y para os ataques
-    #             pos_y = [ GROUND , (GROUND - WIDTH//5) , ((GROUND - WIDTH//2.5))]
-    #             posic = choice(pos_y)
-    #             #magia = Magias()            
+    def ataque_normal(self):
+        #cooldown da magia 
+        now = pygame.time.get_ticks()
+        elapsed_ticks = now - self.last_attack
+        if elapsed_ticks > self.attack_cd:
+            for i in range(10):
+                #opcoes de y para os ataques
+                pos_y = [ GROUND , (GROUND - WIDTH//5) , ((GROUND - WIDTH//2.5))]
+                posic = choice(pos_y)
+                img = self.assets["MAGIA_FORMULA"]
+                img = pygame.transform.scale(img, (SPELL_WIDTH, SPELL_HEIGHT))
+                img = pygame.transform.flip(img, True, False)
+                magia = Magias(img, self.rect.left, posic, -10)
+                all_sprites.add(magia)
+                all_gauss_projectiles.add(magia)
     # def especial(self):
     #     if (self.life < 5000):
 

@@ -3,7 +3,7 @@ from Constantes import *
 pygame.init()
 
 def tela_inicial(window):                                                   #funcão do menu
-    """Funcao para gerar a tela inicial, retorna o proximo estado."""
+    """Funcao para gerar a tela inicial, retorna o próximo estado."""
     font=pygame.font.Font('freesansbold.ttf', 32)                           #funto dos textos dentro da tela
     a=(0,0,0)                                                               #cor q é a tela -- preto
     clock = pygame.time.Clock()
@@ -27,7 +27,7 @@ def tela_inicial(window):                                                   #fun
             if event.type == pygame.MOUSEBUTTONUP:                          #verifica se o jogador apertou e soltou o botao do mouse
                 mouse = pygame.mouse.get_pos()                              #verifica a posicao do mouse
                 if textoRect_jogar.collidepoint(mouse):                     #verifica se o mouse colido com o texto_jogar
-                    return GAME                                             #retorna o estado GAME
+                    return HISTORIA                                            #retorna o estado GAME
                 if textoRect_instrucoes.collidepoint(mouse):                #verifica se o mouse colide com o texto_instrcoues
                     return INSTRUCOES                                       #retorna o estado regras
         tecla=pygame.key.get_pressed()                                      #verifica o teclado

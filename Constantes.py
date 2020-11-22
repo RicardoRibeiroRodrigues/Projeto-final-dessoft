@@ -15,7 +15,6 @@ PLATAFORM_HEIGHT = int(136*RATE)
 #Valores do pulo, gravidade e localização do chão
 GRAVITY = 1
 JUMP_SIZE = 22
-DASH_SIZE = 150
 GROUND = HEIGHT - 96
 #Tamanho das magias
 SPELL_WIDTH = int(60*RATE)
@@ -32,8 +31,10 @@ INIT = 0
 PLAYING = 1
 GAME = 3
 GAME_2 = 4
+GAME_3 = 7
 QUIT = 2
 INSTRUCOES = 5
+HISTORIA = 6
 #estados do jogador 
 STILL = 0
 JUMPING = 1
@@ -44,6 +45,7 @@ all_sprites = pygame.sprite.Group()
 all_fire_magic = pygame.sprite.Group()
 all_blue_fire_magic = pygame.sprite.Group()
 all_enemies_projectiles = pygame.sprite.Group()
+all_gauss_projectiles = pygame.sprite.Group()
 all_enemies = pygame.sprite.Group()
 all_players = pygame.sprite.Group()
 all_plataforms = pygame.sprite.Group()
