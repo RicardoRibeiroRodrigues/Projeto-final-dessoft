@@ -107,21 +107,21 @@ class Player(pygame.sprite.Sprite):
     #metodo para andar pra direita  
     def walk_right(self):
         """Método para andar para direita e definir o lado que o personagem está olhando"""
-        self.speedx += 5
+        self.speedx += 6
         self.facing_way = RIGHT
     #metodo para andar pra esquerda
     def stop_walk_right(self):
         """Método para o personagem parar de andar para direita"""
-        self.speedx -= 5
+        self.speedx -= 6
     #metodo pra andar pra esquerda
     def walk_left(self):
         """Método para esquerda para direita e definir o lado que o personagem está olhando"""
-        self.speedx -= 5
+        self.speedx -= 6
         self.facing_way = LEFT
     #Metodo para parar de andar pra esquerda
     def stop_walk_left(self):
         """Método para o personagem parar de andar para esquerda"""
-        self.speedx += 5
+        self.speedx += 6
     def cast_fire_spell(self):
         """Método para o personagem lançar a magia de fogo para a direção que está olhando"""
         #Para fazer o cooldown
@@ -186,6 +186,8 @@ class Magias(pygame.sprite.Sprite):
         #A magia deixa de existir quando sai da tela
         if self.rect.x > WIDTH:
             self.kill()
+        if self.rect.x < 0:
+            self.kill()
 
 class Inimigos(pygame.sprite.Sprite):
     def __init__(self, img, assets, x, y , player, Plataformas):
@@ -226,6 +228,7 @@ class Inimigos(pygame.sprite.Sprite):
         #se tiver caindo, muda o estado para caindo
         if self.speedy > 0:
             self.state = FALLING
+        #Atualiza a posição no eixo y
         self.rect.y += self.speedy
         #Ao chegar ao chao para de cair
         if self.rect.bottom > GROUND:
@@ -243,9 +246,8 @@ class Inimigos(pygame.sprite.Sprite):
             #Anda para direia, vira para direita
             self.speedx = 2
             self.facing_way = RIGHT
-        #Atualizações de posição.
+        #Atualiza a posição no eixo x
         self.rect.x += self.speedx
-        self.rect.y += self.speedy
         #Para ficar na plataforma
         collisions = pygame.sprite.spritecollide(self, self.plataforms , False)
         #Corrige a posição do player pra antes da colisão
@@ -274,14 +276,15 @@ class Inimigos(pygame.sprite.Sprite):
                     # Atualiza o estado para parado
                     self.state = STILL
     def attack(self):
-        #self, img, right_x , centery, speedx
-        #cooldown da magia
-        chances = [0]*50
+        """Método para os inimigos atacarem"""
+        #Chance do ataque sair.
+        chances = [0]*60
         chances.append(1)
         numero = choice(chances)
+        #cooldown da magia
         now = pygame.time.get_ticks()
         elapsed_ticks = now - self.last_attack
-        if elapsed_ticks > self.attack_cooldown and numero == 1:
+        if (elapsed_ticks > self.attack_cooldown) and numero == 1:
             #Se está olhando para direita, atira para direita
             if self.facing_way == RIGHT:
                 ataque = Magias(self.assets["MAGIA_GELO_IMG"], self.rect.right, self.rect.centery, 10)
@@ -290,34 +293,58 @@ class Inimigos(pygame.sprite.Sprite):
                 self.last_attack = now
             #Se não, atira para esquerda
             else:
-                ataque = Magias(self.assets["MAGIA_GELO_IMG"], self.rect.left, self.rect.centery, -10)
+                img = self.assets["MAGIA_GELO_IMG"]
+                img = pygame.transform.flip(img, True, False)
+                ataque = Magias(img, self.rect.left, self.rect.centery, -10)
                 all_enemies_projectiles.add(ataque)
                 all_sprites.add(ataque)
                 self.last_attack = now
-
-        
+    def jump(self):
+        """Método para o inimigo pular"""
+        chance = [0]*400
+        chance.append(1)
+        num = choice(chance)
+        if self.player.rect.y < self.rect.y and num == 1:
+            if self.state == STILL:
+                self.speedy -= JUMP_SIZE
+                self.state = JUMPING
 class Gauss(pygame.sprite.Sprite):
-    def __init__(self, img, x, player):
+    def __init__(self, img, player):
         pygame.sprite.Sprite.__init__(self)
         #imagem e localizacao
         img = pygame.transform.scale(img, (GAUSS_WIDTH, GAUSS_HEIGHT))
         self.player = player
         self.image = img
         self.rect = img.get_rect()
-        self.rect.centerx = x
-        self.life = 1000
+        self.rect.right = WIDTH
+        #Numero de vidas iniciais
+        self.life = 10000
+        #Cooldown
+        self.last_attack = 0
+        self.attack_cd = 3000
+    def update(self):
+        pass
+    # def ataque_normal(self):
+    #     #cooldown da magia 
+    #     now = pygame.time.get_ticks()
+    #     elapsed_ticks = now - self.last_attack
+    #     if elapsed_ticks > self.attack_cd:
+    #         for i range(10):
+    #             #opcoes de y para os ataques
+    #             pos_y = [ GROUND , (GROUND - WIDTH//5) , ((GROUND - WIDTH//2.5))]
+    #             posic = choice(pos_y)
+    #             #magia = Magias()            
+    # def especial(self):
+    #     if (self.life < 5000):
 
 class Life_bar(pygame.sprite.Sprite):
     def __init__(self, player):
         pygame.sprite.Sprite.__init__(self)
         #guarda o player no self.
         self.player = player
-        #cria o retangulo do barra de vida.
-        self.rect = pygame.Rect((20,10), (200,50))
     def update(self):
         #Atualiza a barra de vida com a vida do player.
-        self.rect= pygame.Rect((20,10),((self.player.lives)//10,50))
-
+        self.rect= pygame.Rect((20,35),((self.player.lives)//10,50))
 
 class Plataform(pygame.sprite.Sprite):
     def __init__(self, img, x, y):

@@ -3,10 +3,10 @@ from Constantes import *
 pygame.init()
 
 def tela_inicial(window):                                                   #funcão do menu
+    """Funcao para gerar a tela inicial, retorna o proximo estado."""
     font=pygame.font.Font('freesansbold.ttf', 32)                           #funto dos textos dentro da tela
     a=(0,0,0)                                                               #cor q é a tela -- preto
     clock = pygame.time.Clock()
-    #musica de fundo
     pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')
     pygame.mixer.music.set_volume(0.4)
     pygame.mixer.music.play(loops=-1)
