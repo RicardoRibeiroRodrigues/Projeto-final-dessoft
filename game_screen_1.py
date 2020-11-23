@@ -20,7 +20,7 @@ def load_assets():
     assets["PLATAFORM_IMG"] = pygame.image.load("assets\Img\Plataforma.png").convert_alpha()
     assets["MAGIA_GELO_IMG"] = pygame.image.load("assets\Img\Magia_Gelo.png").convert_alpha()
     assets["MAGIA_FORMULA"] = pygame.image.load("assets\Img\Magia_gauss.png").convert_alpha()
-    assets["GAUSS"] = pygame.image.load("assets\Img\Boss_temp.png").convert_alpha()
+    assets["GAUSS"] = pygame.image.load("assets\Img\Gauss_img.png").convert_alpha()
     #Para as telas de historia, iniciais e de intruções.
     assets["INTRO_HIST"] = pygame.image.load("assets\Img\Historia\Intro_hist.png").convert()
     assets["PRIMEIRA_HIST"] = pygame.image.load("assets\Img\Historia\primeira_hist.png").convert()
@@ -30,6 +30,15 @@ def load_assets():
     assets["QUINTA_HIST"] = pygame.image.load("assets\Img\Historia\quinto_hist.png").convert()
     assets["SEXTA_HIST"] = pygame.image.load("assets\Img\Historia\sexto_hist.png").convert()
     assets["SETIMA_HIST"] = pygame.image.load("assets\Img\Historia\setimo_hist.png").convert()
+    #Fantasminha, inimigo animado
+    # assets["FANTASMA_NORMAL"] = pygame.image.load("assets\Img\Fantasminha\Normal.png").convert_alpha()
+    fantasma_atacando = []
+    for i in range(7):
+        file_name = f"assets\Img\Fantasminha\Ghost_{i}.png"
+        img = pygame.image.load(file_name).convert_alpha()
+        img = pygame.transform.scale(img, (GHOST_WIDTH, GHOST_HEIGHT))
+        fantasma_atacando.append(img)
+    assets["FANTASMA_ATACANDO"] = fantasma_atacando
     return assets
 
 def game_screen(janela):  #funcao para a janela do jogo

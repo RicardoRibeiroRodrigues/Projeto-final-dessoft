@@ -434,3 +434,10 @@ class Plataform(pygame.sprite.Sprite):
         self.rect = img.get_rect()
         self.rect.left = x
         self.rect.top = y 
+
+class Fantasma(pygame.sprite.Sprite):
+    def __init__(self, assets, player):
+        pygame.sprite.Sprite.__init__(self)
+        #
+        self.assets = assets
+        self.image = assets["FANTASMA_NORMAL"]
