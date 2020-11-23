@@ -18,6 +18,7 @@ def load_assets():
     assets["ENEMIES_IMG"] = pygame.image.load("assets\Img\Inimigos.png").convert_alpha()
     assets["FIREBALL_SOUND"] = pygame.mixer.Sound("assets\Sounds\Bola_de_fogo.wav")
     assets["PLATAFORM_IMG"] = pygame.image.load("assets\Img\Plataforma.png").convert_alpha()
+    assets["PLATAFORM_2_IMG"] = pygame.image.load("assets\Img\plataforma_2.png").convert_alpha()
     assets["MAGIA_GELO_IMG"] = pygame.image.load("assets\Img\Magia_Gelo.png").convert_alpha()
     assets["MAGIA_FORMULA"] = pygame.image.load("assets\Img\Magia_gauss.png").convert_alpha()
     assets["GAUSS"] = pygame.image.load("assets\Img\Gauss_img.png").convert_alpha()
@@ -31,7 +32,6 @@ def load_assets():
     assets["SEXTA_HIST"] = pygame.image.load("assets\Img\Historia\sexto_hist.png").convert()
     assets["SETIMA_HIST"] = pygame.image.load("assets\Img\Historia\setimo_hist.png").convert()
     #Fantasminha, inimigo animado
-    # assets["FANTASMA_NORMAL"] = pygame.image.load("assets\Img\Fantasminha\Normal.png").convert_alpha()
     fantasma_atacando = []
     for i in range(7):
         file_name = f"assets\Img\Fantasminha\Ghost_{i}.png"
@@ -63,6 +63,9 @@ def game_screen(janela):  #funcao para a janela do jogo
     player = Player(assets, all_plataforms)
     #Cria a barra de vida
     barra_de_vida = Life_bar(20, 35, player)
+    #Cria o fantasma e coloca em sprites
+    fantasma = Fantasma(assets, player)
+    all_sprites.add(fantasma)
     #Cria as plataformas
     #posicoes possiveis da parte esquerda da plataforma e parte superior da plataforma.
     pos_x = [300, (300 + PLATAFORM_WIDTH + 20)]
@@ -114,6 +117,8 @@ def game_screen(janela):  #funcao para a janela do jogo
         for enemie in all_enemies:
             enemie.attack()
             enemie.jump()
+        #Fantasma ataca caralho
+        fantasma.attack()
         #Colisão dos ataques do inimigo com o player
         hits_enemie_attack_player = pygame.sprite.groupcollide(all_enemies_projectiles,all_players, True, False)
         for hit in hits_enemie_attack_player:

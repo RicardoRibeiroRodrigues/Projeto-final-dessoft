@@ -8,10 +8,10 @@ PLAYER_WIDTH = int(100*RATE)
 PLAYER_HEIGHT = int(160*RATE)
 ENEMIES_WIDTH = int(100*RATE)
 ENEMIES_HEIGHT = int(160*RATE)
-GHOST_WIDTH = int(100*RATE)
-GHOST_HEIGHT = int(100*RATE)
+GHOST_WIDTH = int(150*RATE)
+GHOST_HEIGHT = int(150*RATE)
 GAUSS_WIDTH = 300
-GAUSS_HEIGHT = 480
+GAUSS_HEIGHT = 400
 PLATAFORM_WIDTH = int(364*0.9)
 PLATAFORM_HEIGHT = int(136*RATE)
 #Valores do pulo, gravidade e localização do chão
@@ -44,6 +44,8 @@ TELA_FINAL = 8
 STILL = 0
 JUMPING = 1
 FALLING = 2
+#estados do fantasma
+ATACANDO = 8
 #Grupos
 #Cria o grupo de todos os sprites
 all_sprites = pygame.sprite.Group()

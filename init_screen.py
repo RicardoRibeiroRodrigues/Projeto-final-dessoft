@@ -27,7 +27,7 @@ def tela_inicial(window):                                                   #fun
             if event.type == pygame.MOUSEBUTTONUP:                          #verifica se o jogador apertou e soltou o botao do mouse
                 mouse = pygame.mouse.get_pos()                              #verifica a posicao do mouse
                 if textoRect_jogar.collidepoint(mouse):                     #verifica se o mouse colido com o texto_jogar
-                    return GAME_3                                            #retorna o estado GAME
+                    return HISTORIA                                            #retorna o estado GAME
                 if textoRect_instrucoes.collidepoint(mouse):                #verifica se o mouse colide com o texto_instrcoues
                     return INSTRUCOES                                       #retorna o estado regras
         tecla=pygame.key.get_pressed()                                      #verifica o teclado

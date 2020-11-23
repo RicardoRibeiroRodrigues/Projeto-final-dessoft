@@ -222,6 +222,7 @@ class Inimigos(pygame.sprite.Sprite):
         self.last_attack = 0
         self.attack_cooldown = 1000
     def update(self):
+        self.image = self.imgs[self.facing_way]
         #Sofrem ação da gravidade
         self.speedy += GRAVITY
         #se tiver caindo, muda o estado para caindo
@@ -438,6 +439,111 @@ class Plataform(pygame.sprite.Sprite):
 class Fantasma(pygame.sprite.Sprite):
     def __init__(self, assets, player):
         pygame.sprite.Sprite.__init__(self)
-        #
+        #Adiciona a primeira imagem
         self.assets = assets
-        self.image = assets["FANTASMA_NORMAL"]
+        img = assets["FANTASMA_ATACANDO"][0]
+        self.imgs = {
+        RIGHT: pygame.transform.flip(img, True, False),
+        LEFT: img,
+        }
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.bottom = GROUND
+        #Coloca a direção que o personagem está olhando
+        self.facing_way = LEFT
+        #Salva o player 
+        self.player = player
+        #Estado inicial do fantasma
+        self.state = STILL
+        #Atributos para animação
+        self.frame_ticks = 150
+        self.frame = 0
+        self.last_update = 0
+        #Cooldown para magia
+        self.last_attack = 0
+        self.attack_cd = 6000
+    def update(self):
+        if self.state == STILL:
+            #Atualiza a direção da imagem
+            self.image = self.imgs[self.facing_way]
+        # Atualiza velocidade para ir em direção ao jogador
+        if self.player.rect.centerx < self.rect.centerx:
+            #Vai para cima para perseguir o player
+            if self.player.rect.centery < self.rect.centery:
+                self.speedy = -2
+            #Vai para baixo para perseguir o player
+            elif self.player.rect.centery > self.rect.centery:
+                self.speedy = 2
+            #Anda para esquerda, vira para esquerda
+            self.speedx = -2
+            self.facing_way = LEFT
+        else:
+            #Vai para cima para perseguir o player
+            if self.player.rect.centery < self.rect.centery:
+                self.speedy = -2
+            #Vai para baixo para perseguir o player
+            elif self.player.rect.centery > self.rect.centery:
+                self.speedy = 2
+            #Anda para direia, vira para direita
+            self.speedx = 2
+            self.facing_way = RIGHT
+        #Atualiza a posição
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        #Salva essa posição para não teletrasportar na animação
+        self.x = self.rect.x
+        self.y = self.rect.y
+        #Se estiver atacando, faz toda animação de atacar
+        if self.state == ATACANDO:
+            now = pygame.time.get_ticks()
+            self.last_attack = now
+            # Verifica quantos ticks se passaram desde a ultima mudança de frame.
+            elapsed_ticks = now - self.last_update
+            # Se já está na hora de mudar de imagem...
+            if elapsed_ticks > self.frame_ticks:
+                # Marca o tick da nova imagem.
+                self.last_update = now
+
+                # Avança um quadro.
+                self.frame += 1
+
+                # Verifica se já chegou no final da animação.
+                if self.frame == len(self.assets["FANTASMA_ATACANDO"]):
+                    #Se sim acaba.
+                    self.state = STILL
+                    self.frame = 0
+                    return None
+                elif self.frame == 5:
+                    if self.facing_way == LEFT:
+                        img = self.assets["MAGIA_GELO_IMG"]
+                        ataque = Magias(img, self.rect.left, self.rect.centery, -10)
+                        all_sprites.add(ataque)
+                        all_enemies_projectiles.add(ataque)
+                    else:
+                        img = self.assets["MAGIA_GELO_IMG"]
+                        img = pygame.transform.flip(img, True, False)
+                        ataque = Magias(img, self.rect.right, self.rect.centery, 10)
+                        all_sprites.add(ataque)
+                        all_enemies_projectiles.add(ataque)
+                else:
+                    if self.facing_way == LEFT:
+                        self.image = self.assets["FANTASMA_ATACANDO"][self.frame]
+                        self.rect = self.image.get_rect()
+                        self.rect.x = self.x
+                        self.rect.y = self.y
+                    else:
+                        img = self.assets["FANTASMA_ATACANDO"][self.frame]
+                        img = pygame.transform.flip(img, True, False)
+                        self.image = img
+                        self.rect = self.image.get_rect()
+                        self.rect.x = self.x
+                        self.rect.y = self.y
+
+    def attack(self):
+        """Método para o fantasma atacar"""
+        now = pygame.time.get_ticks()
+        # Verifica quantos ticks se passaram desde a ultima mudança de frame.
+        elapsed_ticks = now - self.last_attack
+        #Define o estado para atacando
+        if elapsed_ticks > self.attack_cd:
+            self.state = ATACANDO
