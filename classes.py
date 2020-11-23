@@ -39,8 +39,12 @@ class Player(pygame.sprite.Sprite):
         self.damage_cooldown = 500
         #Vida inicial do player
         self.lives = 2000
+        #Variação de tempo
+        self.dt = 0
     def update(self):
+        #Atualiza a imagem para a direção em que está olhando
         self.image = self.imgs[self.facing_way]
+        #Contabiliza a gravidade
         self.speedy += GRAVITY
         #se tiver caindo, muda o estado para caindo
         if self.speedy > 0:
@@ -158,6 +162,11 @@ class Player(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last_damage > self.damage_cooldown:
             self.lives -= damage
+    def update_dt(self,speed):
+        self.dt = speed
+
+    def dash(self):
+        self.rect.x += 50 * self.dt
 
 class Magias(pygame.sprite.Sprite):
     def __init__(self, img, right_x , centery, speedx):
@@ -169,6 +178,7 @@ class Magias(pygame.sprite.Sprite):
         self.rect.right = right_x
         self.rect.centery = centery
         self.speedx = speedx
+
     def update(self):
         #A magia so se move no eixo x
         self.rect.x += self.speedx
@@ -297,6 +307,7 @@ class Inimigos(pygame.sprite.Sprite):
             if self.state == STILL:
                 self.speedy -= JUMP_SIZE
                 self.state = JUMPING
+    
 class Gauss(pygame.sprite.Sprite):
     def __init__(self, img, assets, player):
         pygame.sprite.Sprite.__init__(self)
@@ -305,40 +316,113 @@ class Gauss(pygame.sprite.Sprite):
         self.player = player
         self.image = img
         self.rect = img.get_rect()
+        self.rect.bottom = GROUND
         self.rect.right = WIDTH
         #Salva os assets
         self.assets = assets
         #Numero de vidas iniciais
-        self.life = 10000
+        self.lives = 2000
         #Cooldown
         self.last_attack = 0
         self.attack_cd = 3000
+        self.last_especial_attack = 0
+        self.special_cd = 6000
     def ataque_normal(self):
+        """Funcao para o ataque padrao de gauss, atira em 10 projeteis em ys aleatorios"""
         #cooldown da magia 
         now = pygame.time.get_ticks()
         elapsed_ticks = now - self.last_attack
         if elapsed_ticks > self.attack_cd:
             for i in range(10):
-                #opcoes de y para os ataques
-                pos_y = [ GROUND , (GROUND - WIDTH//5) , ((GROUND - WIDTH//2.5))]
+                #Opcoes de y para os ataques
+                max_y = int((GROUND - WIDTH//2.5) - PLAYER_HEIGHT)
+                pos_y = range(GROUND, max_y, -50)
                 posic = choice(pos_y)
+                #Criação do projetil
                 img = self.assets["MAGIA_FORMULA"]
                 img = pygame.transform.scale(img, (SPELL_WIDTH, SPELL_HEIGHT))
                 img = pygame.transform.flip(img, True, False)
-                magia = Magias(img, self.rect.left, posic, -10)
+                magia = Magias(img, self.rect.left, posic, -6)
                 all_sprites.add(magia)
                 all_gauss_projectiles.add(magia)
-    # def especial(self):
-    #     if (self.life < 5000):
+                self.last_attack = now
+    def ataque_especial(self):
+        #cooldown da magia 
+        now = pygame.time.get_ticks()
+        elapsed_ticks = now - self.last_especial_attack
+        if elapsed_ticks > self.special_cd:
+            #Cooldown do ataque
+            ataque = Special_attack(self.assets["MAGIA_FORMULA"], self.player, now, self.rect.centerx , self.rect.centery)
+            all_sprites.add(ataque)
+            all_gauss_special_attacks.add(ataque)
+            self.last_especial_attack = now
+
+class Special_attack(pygame.sprite.Sprite):
+    def __init__(self, img, player, time, centerx, centery):
+        pygame.sprite.Sprite.__init__(self)
+        #Transformação da imagem.
+        img = pygame.transform.scale(img, (GAUSS_SPECIAL_WIDTH,GAUSS_SPECIAL_HEIGHT))
+        self.imgs = {
+            RIGHT: img,
+            LEFT: pygame.transform.flip(img, True, False),
+        }
+        self.cast_time = time
+        self.facing_way = RIGHT
+        self.image = self.imgs[self.facing_way]
+        self.rect = img.get_rect()
+        #Posição
+        self.rect.centerx = centerx
+        self.rect.centery = centery
+        #Coloca o player como atributo do objeto
+        self.player = player
+        #Velocidade inicial
+        self.speedx = 0
+    def update(self):
+        #Atualiza imagem.
+        self.image = self.imgs[self.facing_way]
+        #Tempo de perseguição
+        now = pygame.time.get_ticks()
+        elapsed_ticks = now - self.cast_time
+        #Persegue o player so por determinado tempo
+        if elapsed_ticks <= 4000:
+            # Atualiza velocidade para ir em direção ao jogador
+            if self.player.rect.centerx < self.rect.centerx:
+                #Vai para cima para perseguir o player
+                if self.player.rect.centery < self.rect.centery:
+                    self.speedy = -2
+                #Vai para baixo para perseguir o player
+                elif self.player.rect.centery > self.rect.centery:
+                    self.speedy = 2
+                #Anda para esquerda, vira para esquerda
+                self.speedx = -2
+                self.facing_way = LEFT
+            else:
+                #Vai para cima para perseguir o player
+                if self.player.rect.centery < self.rect.centery:
+                    self.speedy = -2
+                #Vai para baixo para perseguir o player
+                elif self.player.rect.centery > self.rect.centery:
+                    self.speedy = 2
+                #Anda para direia, vira para direita
+                self.speedx = 2
+                self.facing_way = RIGHT
+        else:
+            self.kill()
+        #Atualiza a posição no eixo x e no eixo y
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
 
 class Life_bar(pygame.sprite.Sprite):
-    def __init__(self, player):
+    def __init__(self, x, y, entity):
         pygame.sprite.Sprite.__init__(self)
-        #guarda o player no self.
-        self.player = player
+        #guarda a entidade no self.
+        self.entity = entity
+        #X e Y onde deve ser desenhado
+        self.x = x
+        self.y = y
     def update(self):
-        #Atualiza a barra de vida com a vida do player.
-        self.rect= pygame.Rect((20,35),((self.player.lives)//10,50))
+        #Atualiza a barra de vida com a vida da entidade passada.
+        self.rect = pygame.Rect((self.x, self.y),((self.entity.lives)//10,50))
 
 class Plataform(pygame.sprite.Sprite):
     def __init__(self, img, x, y):

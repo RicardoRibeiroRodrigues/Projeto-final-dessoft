@@ -3,7 +3,7 @@ import pygame
 WIDTH = 1200  #largura da tela
 HEIGHT = 800 #altura da tela
 FPS = 120    #frames por segundo
-RATE = 0.70
+RATE = 0.70  #Para diminuição de elementos do jogo (Caber mais elementos e interações)
 PLAYER_WIDTH = int(100*RATE)
 PLAYER_HEIGHT = int(160*RATE)
 ENEMIES_WIDTH = int(100*RATE)
@@ -19,6 +19,8 @@ GROUND = HEIGHT - 96
 #Tamanho das magias
 SPELL_WIDTH = int(60*RATE)
 SPELL_HEIGHT = int(60*RATE)
+GAUSS_SPECIAL_WIDTH = int(120*RATE)
+GAUSS_SPECIAL_HEIGHT = int(120*RATE)
 #cores basicas
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -35,6 +37,7 @@ GAME_3 = 7
 QUIT = 2
 INSTRUCOES = 5
 HISTORIA = 6
+TELA_FINAL = 8
 #estados do jogador 
 STILL = 0
 JUMPING = 1
@@ -46,6 +49,7 @@ all_fire_magic = pygame.sprite.Group()
 all_blue_fire_magic = pygame.sprite.Group()
 all_enemies_projectiles = pygame.sprite.Group()
 all_gauss_projectiles = pygame.sprite.Group()
+all_gauss_special_attacks = pygame.sprite.Group()
 all_enemies = pygame.sprite.Group()
 all_players = pygame.sprite.Group()
 all_plataforms = pygame.sprite.Group()
