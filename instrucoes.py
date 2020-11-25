@@ -8,15 +8,19 @@ class Botoes_instrucoes():                                          #classe que 
         self.textoRect.center=(x, y)
     def blits(self, window):                                    #mostra os textsos    
         window.blit(self.texto, self.textoRect)
-def regras(window):
+def regras(window,assets):
     """funcao que mostra os contrles e retorna a funcao INIT"""
     font=pygame.font.Font('freesansbold.ttf', 32)                   #define a fonte do texto
     clock = pygame.time.Clock()
     pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')        #define uma musica
     pygame.mixer.music.set_volume(0.4)                              #define o volume da musica
     pygame.mixer.music.play(loops=-1)                               #toca a musica em loop
+    BACKGROUND = assets["TELA_INICIAL"]
+    BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
+    BACKGROUND_RECT = BACKGROUND.get_rect()                               
     while True:
         window.fill((0,0,0))                                        #preenche a tela de preto
+        window.blit(BACKGROUND, BACKGROUND_RECT)                    #Coloca a imagem de fundo
         VERDE = (0, 255, 0)                                         #define a cor verde
         texto_voltar=Botoes_instrucoes(font, window, ((WIDTH*10) // 10)-100, HEIGHT -50, 'Voltar')              #passa os parametros para criar os textos
         texto_espaco = Botoes_instrucoes(font, window, WIDTH-1000, ((HEIGHT-100)/5), 'Espaço')                  #passa os parametros para criar os textos
@@ -52,4 +56,4 @@ def regras(window):
                 if texto_voltar.textoRect.collidepoint(mouse):
                     return INIT
         pygame.display.update()
-        clock.tick(240)
+        clock.tick(FPS)

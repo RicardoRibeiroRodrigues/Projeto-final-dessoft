@@ -25,6 +25,7 @@ def load_assets():
     assets["BOLA_ENERGIA"] = pygame.image.load("assets\Img\Bola_de_energia.png").convert_alpha()
     assets["FUNDO_ASSOMBRADO"] = pygame.image.load("assets\Img\Fundo_assombrado.png").convert()
     #Para as telas de historia, iniciais e de intruções.
+    assets["TELA_INICIAL"] = pygame.image.load("assets\Img\Historia\Tela_inicial.jpg").convert()
     assets["INTRO_HIST"] = pygame.image.load("assets\Img\Historia\Intro_hist.png").convert()
     assets["PRIMEIRA_HIST"] = pygame.image.load("assets\Img\Historia\primeira_hist.png").convert()
     assets["SEGUNDA_HIST"] = pygame.image.load("assets\Img\Historia\segunda_hist.png").convert()
@@ -33,6 +34,9 @@ def load_assets():
     assets["QUINTA_HIST"] = pygame.image.load("assets\Img\Historia\quinto_hist.png").convert()
     assets["SEXTA_HIST"] = pygame.image.load("assets\Img\Historia\sexto_hist.png").convert()
     assets["SETIMA_HIST"] = pygame.image.load("assets\Img\Historia\setimo_hist.png").convert()
+    assets["FINAL_1"] = pygame.image.load("assets\Img\Historia\Imagem_final1.png").convert()
+    assets["FINAL_2"] = pygame.image.load("assets\Img\Historia\Imagem_final2.png").convert()
+    assets["TELA_FINAL"] = pygame.image.load("assets\Img\Historia\Tela_Final.jpg").convert() 
     #Fantasminha, inimigo animado
     fantasma_atacando = []
     for i in range(7):

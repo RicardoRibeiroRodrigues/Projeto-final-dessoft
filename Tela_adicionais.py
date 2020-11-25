@@ -80,3 +80,59 @@ def tela_das_hist(janela, assets):
             janela.blit(texto_pular_tela,(400, 50))
         pygame.display.flip()
     return state
+
+def tela_final(janela, assets):
+    #variavel para controlar o FPS
+    clock = pygame.time.Clock()
+    #Carrega o background inicial
+    BACKGROUND = assets["FINAL_1"]
+    BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
+    BACKGROUND_RECT = BACKGROUND.get_rect()
+    #Fonte para escrita na tela
+    fonte = pygame.font.Font('freesansbold.ttf', 32)
+    texto_passar_diag = fonte.render("Para passar o dialogo aperte p (uma vez)", True, RED)
+    texto_pular_tela = fonte.render("Para sair, aperte ESC", True, RED)
+    #Tempo que começa
+    começo = pygame.time.get_ticks()
+    #Limpa os grupos da tela passada.
+    all_plataforms.empty()
+    all_players.empty()
+    all_sprites.empty()
+    #Contador para as telas
+    i = 0
+    #loop da tela
+    state = PLAYING
+    while state != QUIT:
+        #Limita o FPS
+        clock.tick(FPS)
+        #Processa os eventos
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                state = QUIT
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    #Passa de tela
+                    i += 1
+                if event.key == pygame.K_ESCAPE:
+                    state = QUIT
+        #primeira tela
+        if i == 1:
+            BACKGROUND = assets["FINAL_2"]
+            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
+            BACKGROUND_RECT = BACKGROUND.get_rect()
+        #Tela final
+        elif i == 2:
+            BACKGROUND = assets["TELA_FINAL"]
+            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
+            BACKGROUND_RECT = BACKGROUND.get_rect()
+        #desenha os elementos na tela.
+        janela.fill(BLACK)
+        janela.blit(BACKGROUND, BACKGROUND_RECT)
+        #Pega o tempo
+        now = pygame.time.get_ticks()
+        #Tira as instruções da tela
+        if (now - começo) < 7000: 
+            janela.blit(texto_passar_diag, (400,0))
+            janela.blit(texto_pular_tela,(400, 50))
+        pygame.display.flip()
+    return state

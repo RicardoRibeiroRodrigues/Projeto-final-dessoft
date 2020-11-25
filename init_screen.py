@@ -2,7 +2,7 @@ import pygame
 from Constantes import *
 pygame.init()
 
-def tela_inicial(window):                                                   #funcão do menu
+def tela_inicial(window, assets):                                                   #funcão do menu
     """Funcao para gerar a tela inicial, retorna o próximo estado."""
     font=pygame.font.Font('freesansbold.ttf', 32)                           #funto dos textos dentro da tela
     a=(0,0,0)                                                               #cor q é a tela -- preto
@@ -10,8 +10,12 @@ def tela_inicial(window):                                                   #fun
     pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')
     pygame.mixer.music.set_volume(0.4)
     pygame.mixer.music.play(loops=-1)
+    BACKGROUND = assets["TELA_INICIAL"]
+    BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
+    BACKGROUND_RECT = BACKGROUND.get_rect()
     while True:                                                             #loop principal do menu
         window.fill(a)                                                      #preenche  tela com a cor definida em a
+        window.blit(BACKGROUND, BACKGROUND_RECT)                            #Coloca a imagem de fundo                         
         cor=(0, 255, 0)                                                     #cor dos escritos
         texto_jogar=font.render('JOGAR', True, cor, (0, 0, 0))              #cria o texto_jogar
         textoRect_jogar = texto_jogar.get_rect()                            #pega a hit-box do texto_jogar
@@ -27,7 +31,7 @@ def tela_inicial(window):                                                   #fun
             if event.type == pygame.MOUSEBUTTONUP:                          #verifica se o jogador apertou e soltou o botao do mouse
                 mouse = pygame.mouse.get_pos()                              #verifica a posicao do mouse
                 if textoRect_jogar.collidepoint(mouse):                     #verifica se o mouse colido com o texto_jogar
-                    return HISTORIA                                         #retorna o estado GAME
+                    return HISTORIA                                         #retorna o estado HISTORIA
                 if textoRect_instrucoes.collidepoint(mouse):                #verifica se o mouse colide com o texto_instrcoues
                     return INSTRUCOES                                       #retorna o estado regras
         tecla=pygame.key.get_pressed()                                      #verifica o teclado
