@@ -6,10 +6,11 @@ class Botoes_instrucoes():                                          #classe que 
         self.texto=font.render(comando, True, cor, (0, 0, 0))
         self.textoRect=self.texto.get_rect()
         self.textoRect.center=(x, y)
-    def blits(self, window):                                    #mostra os textsos    
-        window.blit(self.texto, self.textoRect)
+    def blits(self, window):
+        """Método para desenhar os textos na tela"""    
+        window.blit(self.texto, self.textoRect)                     #mostra os textos
 def regras(window,assets):
-    """funcao que mostra os contrles e retorna a funcao INIT"""
+    """funcao que mostra os contrles e retorna o estado INIT"""
     font=pygame.font.Font('freesansbold.ttf', 32)                   #define a fonte do texto
     clock = pygame.time.Clock()
     pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')        #define uma musica
