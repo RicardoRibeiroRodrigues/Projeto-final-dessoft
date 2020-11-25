@@ -1,7 +1,7 @@
 # Projeto-final-dessoft
 Integrantes do grupo: __Felipe Barros__, __Ricardo Rodrigues__ e __Rafael Niccheri__ 
 # Titulo: As lendárias aventuras de juninho
-Nosso heroi, juninho inicia sua jornada no himalaia,
+Nosso herói, juninho inicia sua jornada no himalaia,
 onde um grande sábio pede para que ele recupere um poderoso artefato, será juninho vitorioso nessa jornada?
 ## Vídeo do jogo em funcionamento 
 
