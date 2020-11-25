@@ -82,6 +82,7 @@ def tela_das_hist(janela, assets):
     return state
 
 def tela_final(janela, assets):
+    """Função para a tela final do jogo"""
     #variavel para controlar o FPS
     clock = pygame.time.Clock()
     #Carrega o background inicial
