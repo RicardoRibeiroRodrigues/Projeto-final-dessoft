@@ -1,6 +1,6 @@
 import pygame
-from Constantes import WIDTH, HEIGHT, INIT, INSTRUCOES, GAME, QUIT, GAME_2, HISTORIA, GAME_3
-from game_screen_1 import game_screen, game_screen_2, game_screen_3
+from Constantes import WIDTH, HEIGHT, INIT, INSTRUCOES, GAME, QUIT, GAME_2, HISTORIA, GAME_3, GAME_4
+from game_screen_1 import game_screen, game_screen_2, game_screen_3, game_screen_4, load_assets
 from init_screen import tela_inicial
 from instrucoes import regras
 from Tela_adicionais import tela_das_hist
@@ -11,6 +11,8 @@ pygame.mixer.init()
 # ----- Gera tela principal
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Jogo')
+#Assets
+assets = load_assets()
 
 state = INIT
 while state != QUIT:
@@ -19,13 +21,15 @@ while state != QUIT:
     elif state == INSTRUCOES:
         state = regras(window)
     elif state == HISTORIA:
-        state = tela_das_hist(window)
+        state = tela_das_hist(window,assets)
     elif state == GAME:
-        state = game_screen(window)
+        state = game_screen(window,assets)
     elif state == GAME_2:
-        state = game_screen_2(window)
+        state = game_screen_2(window,assets)
     elif state == GAME_3:
-        state = game_screen_3(window)
+        state = game_screen_3(window,assets)
+    elif state == GAME_4:
+        state = game_screen_4(window, assets)
     else:
         state = QUIT
 

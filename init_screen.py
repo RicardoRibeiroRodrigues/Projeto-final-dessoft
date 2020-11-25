@@ -15,10 +15,10 @@ def tela_inicial(window):                                                   #fun
         cor=(0, 255, 0)                                                     #cor dos escritos
         texto_jogar=font.render('JOGAR', True, cor, (0, 0, 0))              #cria o texto_jogar
         textoRect_jogar = texto_jogar.get_rect()                            #pega a hit-box do texto_jogar
-        textoRect_jogar.center = (100, 600)                                 #posiciona o texto_jogar
+        textoRect_jogar.center = (100, HEIGHT-100)                                 #posiciona o texto_jogar
         texto_instrucoes=font.render('INSTRUÇÕES', True, cor, (0, 0, 0))    #cria o texto_instrucoes
         textoRect_instrucoes=texto_instrucoes.get_rect()                    #pega a hitbox do texto_instrcoes
-        textoRect_instrucoes.center = (585, 600)                            #posiciona o texto_instrucoes
+        textoRect_instrucoes.center = (WIDTH-150, HEIGHT-100)                            #posiciona o texto_instrucoes
         window.blit(texto_jogar, textoRect_jogar)                           #escreve o texto_jogar
         window.blit(texto_instrucoes, textoRect_instrucoes)                 #escreve o texto_instrucoes
         for event in pygame.event.get():                                    #verifica os eventos do pygame
@@ -27,7 +27,7 @@ def tela_inicial(window):                                                   #fun
             if event.type == pygame.MOUSEBUTTONUP:                          #verifica se o jogador apertou e soltou o botao do mouse
                 mouse = pygame.mouse.get_pos()                              #verifica a posicao do mouse
                 if textoRect_jogar.collidepoint(mouse):                     #verifica se o mouse colido com o texto_jogar
-                    return HISTORIA                                            #retorna o estado GAME
+                    return HISTORIA                                         #retorna o estado GAME
                 if textoRect_instrucoes.collidepoint(mouse):                #verifica se o mouse colide com o texto_instrcoues
                     return INSTRUCOES                                       #retorna o estado regras
         tecla=pygame.key.get_pressed()                                      #verifica o teclado

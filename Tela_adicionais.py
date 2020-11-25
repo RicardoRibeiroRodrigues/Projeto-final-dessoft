@@ -1,14 +1,11 @@
 import pygame
 from Constantes import *
-from game_screen_1 import load_assets
 pygame.init()
 
-def tela_das_hist(janela):
+def tela_das_hist(janela, assets):
     """Função para a história do jogo, returna ao final o estado para GAME"""
     #variavel para controlar o FPS
     clock = pygame.time.Clock()
-    #carrega os assets
-    assets = load_assets()
     #Carrega o background inicial
     BACKGROUND = assets["INTRO_HIST"]
     BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))

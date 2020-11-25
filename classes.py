@@ -23,9 +23,14 @@ class Player(pygame.sprite.Sprite):
         self.rect =  img.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = GROUND
+        #Maior altura alcançada pelo personagem, começa com a parte de baixo
+        self.highest_y = self.rect.bottom
         #velocidades
         self.speedx = 0
         self.speedy = 0 
+        self.move = 0 # 0 == parado, 1 == direita, 2 == esquerda
+        self.teclad = 0 # 0 == False, 1== True
+        self.teclae = 0 #0 == False, 1== True
         #Define o estado
         self.state = STILL
         #para o cooldown das magias e do dash e do dano
@@ -39,8 +44,6 @@ class Player(pygame.sprite.Sprite):
         self.damage_cooldown = 500
         #Vida inicial do player
         self.lives = 2000
-        #Variação de tempo
-        self.dt = 0
     def update(self):
         #Atualiza a imagem para a direção em que está olhando
         self.image = self.imgs[self.facing_way]
@@ -85,7 +88,15 @@ class Player(pygame.sprite.Sprite):
                     # Atualiza o estado para parado
                     self.state = STILL
         #Atualiza a posição do eixo x.
-        self.rect.x += self.speedx
+        if self.teclad == 1 and self.teclae == 1: # tecla da direita e da esquerda apertadas
+            if self.move == 1:                      #se o estado do move for 1
+                self.rect.x += 6
+            if self.move == 2:                      #se o estado do move for 2
+                self.rect.x -= 6
+        elif self.teclad == 1:                      #so a tecla da direita apertada
+            self.rect.x +=6
+        elif self.teclae == 1:                      #se a tecla de esquerda for apertada
+            self.rect.x -= 6
         # Corrige a posição caso tenha passado do tamanho da janela
         if self.rect.left < 0:
             self.rect.left = 0
@@ -100,21 +111,23 @@ class Player(pygame.sprite.Sprite):
     #metodo para andar pra direita  
     def walk_right(self):
         """Método para andar para direita e definir o lado que o personagem está olhando"""
-        self.speedx += 6
+        self.move = 1                   #muda o etado do move para direita
         self.facing_way = RIGHT
+        self.teclad = 1                 #muda o estado da teclad para True
     #metodo para andar pra esquerda
     def stop_walk_right(self):
         """Método para o personagem parar de andar para direita"""
-        self.speedx -= 6
+        self.teclad = 0                 #muda o estado da teclad para False
     #metodo pra andar pra esquerda
     def walk_left(self):
         """Método para esquerda para direita e definir o lado que o personagem está olhando"""
-        self.speedx -= 6
+        self.move = 2                   #muda o etado do move para esquerda
         self.facing_way = LEFT
+        self.teclae = 1                 #muda o estado da teclad para True
     #Metodo para parar de andar pra esquerda
     def stop_walk_left(self):
         """Método para o personagem parar de andar para esquerda"""
-        self.speedx += 6
+        self.teclae = 0
     def cast_fire_spell(self):
         """Método para o personagem lançar a magia de fogo para a direção que está olhando"""
         #Para fazer o cooldown
@@ -150,6 +163,8 @@ class Player(pygame.sprite.Sprite):
                 magia = Magias(self.assets["MAGIA_FOGO_AZUL_IMG"], self.rect.right, self.rect.top, 10)
                 all_sprites.add(magia)
                 all_blue_fire_magic.add(magia)
+                #Adiciona um som para a magia
+                self.assets["FIREBALL_SOUND"].play()
             else:
                 #vira a magia para ela ir para o lado certo
                 img = self.assets["MAGIA_FOGO_AZUL_IMG"]
@@ -157,16 +172,13 @@ class Player(pygame.sprite.Sprite):
                 magia = Magias(img , self.rect.left, self.rect.top, -10)
                 all_sprites.add(magia)
                 all_blue_fire_magic.add(magia)
+                #Adiciona um som para a magia
+                self.assets["FIREBALL_SOUND"].play()
     def take_damage(self, damage):
         """Método para o personagem tomar dano com intervalo entre os danos, para nao morrer instantaneamente"""
         now = pygame.time.get_ticks()
         if now - self.last_damage > self.damage_cooldown:
             self.lives -= damage
-    def update_dt(self,speed):
-        self.dt = speed
-
-    def dash(self):
-        self.rect.x += 50 * self.dt
 
 class Magias(pygame.sprite.Sprite):
     def __init__(self, img, right_x , centery, speedx):
@@ -221,6 +233,8 @@ class Inimigos(pygame.sprite.Sprite):
         #Cooldown da magia do inimigo
         self.last_attack = 0
         self.attack_cooldown = 1000
+        #Maior altura alcançada pelo personagem, começa com a parte de baixo
+        self.highest_y = self.rect.bottom
     def update(self):
         self.image = self.imgs[self.facing_way]
         #Sofrem ação da gravidade
@@ -340,7 +354,7 @@ class Gauss(pygame.sprite.Sprite):
                 pos_y = range(GROUND, max_y, -50)
                 posic = choice(pos_y)
                 #Criação do projetil
-                img = self.assets["MAGIA_FORMULA"]
+                img = self.assets["BOLA_ENERGIA"]
                 img = pygame.transform.scale(img, (SPELL_WIDTH, SPELL_HEIGHT))
                 img = pygame.transform.flip(img, True, False)
                 magia = Magias(img, self.rect.left, posic, -6)
@@ -348,6 +362,7 @@ class Gauss(pygame.sprite.Sprite):
                 all_gauss_projectiles.add(magia)
                 self.last_attack = now
     def ataque_especial(self):
+        """Método para gauss atirar seu ataque especial, que segue o player"""
         #cooldown da magia 
         now = pygame.time.get_ticks()
         elapsed_ticks = now - self.last_especial_attack
@@ -408,6 +423,7 @@ class Special_attack(pygame.sprite.Sprite):
                 self.speedx = 2
                 self.facing_way = RIGHT
         else:
+            #Se acabou o tempo de perseguição, morre.
             self.kill()
         #Atualiza a posição no eixo x e no eixo y
         self.rect.x += self.speedx
@@ -459,9 +475,11 @@ class Fantasma(pygame.sprite.Sprite):
         self.frame_ticks = 150
         self.frame = 0
         self.last_update = 0
-        #Cooldown para magia
+        #Cooldown do ataque
+        self.attack_cd = 3000
         self.last_attack = 0
-        self.attack_cd = 6000
+        #Vidas iniciais do fantasma
+        self.lives = 220
     def update(self):
         if self.state == STILL:
             #Atualiza a direção da imagem
@@ -503,39 +521,45 @@ class Fantasma(pygame.sprite.Sprite):
             if elapsed_ticks > self.frame_ticks:
                 # Marca o tick da nova imagem.
                 self.last_update = now
-
                 # Avança um quadro.
                 self.frame += 1
-
                 # Verifica se já chegou no final da animação.
                 if self.frame == len(self.assets["FANTASMA_ATACANDO"]):
                     #Se sim acaba.
                     self.state = STILL
                     self.frame = 0
                     return None
+                #Se estiver no penultimo frame da animação, ataca.
                 elif self.frame == 5:
+                    #Se estiver olhando para esquerda, ataca para esquerda
                     if self.facing_way == LEFT:
                         img = self.assets["MAGIA_GELO_IMG"]
                         ataque = Magias(img, self.rect.left, self.rect.centery, -10)
                         all_sprites.add(ataque)
                         all_enemies_projectiles.add(ataque)
+                    #Se não, ataca para direita
                     else:
                         img = self.assets["MAGIA_GELO_IMG"]
                         img = pygame.transform.flip(img, True, False)
                         ataque = Magias(img, self.rect.right, self.rect.centery, 10)
                         all_sprites.add(ataque)
                         all_enemies_projectiles.add(ataque)
+                #Se não tiver acabado, muda de frame
                 else:
+                    #Animação para direita
                     if self.facing_way == LEFT:
                         self.image = self.assets["FANTASMA_ATACANDO"][self.frame]
                         self.rect = self.image.get_rect()
+                        #Coloca o retangulo para o local onde estava antes.
                         self.rect.x = self.x
                         self.rect.y = self.y
+                    #Muda animação para direita
                     else:
                         img = self.assets["FANTASMA_ATACANDO"][self.frame]
                         img = pygame.transform.flip(img, True, False)
                         self.image = img
                         self.rect = self.image.get_rect()
+                        #Coloca o retangulo para o local onde estava antes.
                         self.rect.x = self.x
                         self.rect.y = self.y
 
@@ -544,6 +568,6 @@ class Fantasma(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         # Verifica quantos ticks se passaram desde a ultima mudança de frame.
         elapsed_ticks = now - self.last_attack
-        #Define o estado para atacando
+        #Se já estiver na hora de atacar de novo, define o estado para atacando.
         if elapsed_ticks > self.attack_cd:
             self.state = ATACANDO
