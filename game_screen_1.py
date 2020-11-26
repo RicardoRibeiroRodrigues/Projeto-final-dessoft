@@ -307,7 +307,7 @@ def game_screen_3(janela, assets):
             all_sprites.add(plataformas)
     state = PLAYING
     while state != QUIT:
-        #Limita o FPS e pega delta t
+        #Limita o FPS.
         clock.tick(FPS)
         #Faz a interação dos eventos
         for event in pygame.event.get():
