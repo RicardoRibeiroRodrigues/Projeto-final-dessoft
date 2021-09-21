@@ -17,17 +17,17 @@ assets = load_assets()
 state = INIT
 while state != QUIT:
     if state == INIT:
-        state = tela_inicial(window,assets)
+        state = tela_inicial(window, assets)
     elif state == INSTRUCOES:
-        state = regras(window,assets)
+        state = regras(window, assets)
     elif state == HISTORIA:
-        state = tela_das_hist(window,assets)
+        state = tela_das_hist(window, assets)
     elif state == GAME:
-        state = game_screen(window,assets)
+        state = game_screen(window, assets)
     elif state == GAME_2:
-        state = game_screen_2(window,assets)
+        state = game_screen_2(window, assets)
     elif state == GAME_3:
-        state = game_screen_3(window,assets)
+        state = game_screen_3(window, assets)
     elif state == GAME_4:
         state = game_screen_4(window, assets)
     elif state == TELA_FINAL:

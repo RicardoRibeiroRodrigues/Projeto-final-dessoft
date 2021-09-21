@@ -4,6 +4,13 @@ from random import choice
 pygame.init()
 pygame.mixer.init()
 
+
+class Unidade(pygame.sprite.Sprite):
+    def __init__(self, assets):
+        pygame.sprite.Sprite.__init__(self)
+        self.assets = assets
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, assets, grupos_plataformas):
         pygame.sprite.Sprite.__init__(self)
@@ -114,7 +121,7 @@ class Player(pygame.sprite.Sprite):
         self.move = 1                   #muda o etado do move para direita
         self.facing_way = RIGHT
         self.teclad = 1                 #muda o estado da teclad para True
-    #metodo para andar pra esquerda
+   
     def stop_walk_right(self):
         """Método para o personagem parar de andar para direita"""
         self.teclad = 0                 #muda o estado da teclad para False
@@ -459,8 +466,8 @@ class Fantasma(pygame.sprite.Sprite):
         self.assets = assets
         img = assets["FANTASMA_ATACANDO"][0]
         self.imgs = {
-        RIGHT: pygame.transform.flip(img, True, False),
-        LEFT: img,
+            RIGHT: pygame.transform.flip(img, True, False),
+            LEFT: img,
         }
         self.image = img
         self.rect = self.image.get_rect()
