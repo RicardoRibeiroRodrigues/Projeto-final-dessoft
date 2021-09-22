@@ -44,6 +44,7 @@ def load_assets():
         file_name = f"assets\Img\Fantasminha\Ghost_{i}.png"
         img = pygame.image.load(file_name).convert_alpha()
         img = pygame.transform.scale(img, (GHOST_WIDTH, GHOST_HEIGHT))
+        img = pygame.transform.flip(img, True, False)
         fantasma_atacando.append(img)
     assets["FANTASMA_ATACANDO"] = fantasma_atacando
     return assets
