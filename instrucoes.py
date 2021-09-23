@@ -1,28 +1,29 @@
 import pygame
 from Constantes import *
+from game_screen_1 import carrega_background, carrega_musica
+
+
 class Botoes_instrucoes():                                          #classe que cria os textos
     def __init__(self, font, window, x, y, comando):                
-        cor=(0, 255, 0)
+        cor = GREEN
         self.texto=font.render(comando, True, cor, (0, 0, 0))
         self.textoRect=self.texto.get_rect()
         self.textoRect.center=(x, y)
     def blits(self, window):
         """Método para desenhar os textos na tela"""    
         window.blit(self.texto, self.textoRect)                     #mostra os textos
-def regras(window,assets):
-    """funcao que mostra os contrles e retorna o estado INIT"""
-    font=pygame.font.Font('freesansbold.ttf', 32)                   #define a fonte do texto
+
+
+
+def regras(window, assets):
+    """funcao que mostra os controles e retorna o estado INIT"""
+    font = pygame.font.Font('freesansbold.ttf', 32)                   #define a fonte do texto
     clock = pygame.time.Clock()
-    pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')        #define uma musica
-    pygame.mixer.music.set_volume(0.4)                              #define o volume da musica
-    pygame.mixer.music.play(loops=-1)                               #toca a musica em loop
-    BACKGROUND = assets["TELA_INICIAL"]
-    BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-    BACKGROUND_RECT = BACKGROUND.get_rect()                               
+    carrega_musica('assets/Sounds/Musica_loop.mp3')
+    BACKGROUND, BACKGROUND_RECT = carrega_background("TELA_INICIAL", assets)                            
     while True:
-        window.fill((0,0,0))                                        #preenche a tela de preto
+        window.fill(BLACK)                                        #preenche a tela de preto
         window.blit(BACKGROUND, BACKGROUND_RECT)                    #Coloca a imagem de fundo
-        VERDE = (0, 255, 0)                                         #define a cor verde
         texto_voltar=Botoes_instrucoes(font, window, ((WIDTH*10) // 10)-100, HEIGHT -50, 'Voltar')              #passa os parametros para criar os textos
         texto_espaco = Botoes_instrucoes(font, window, WIDTH-1000, ((HEIGHT-100)/5), 'Espaço')                  #passa os parametros para criar os textos
         texto_C = Botoes_instrucoes(font, window, WIDTH-1000, ((HEIGHT-100)/5)*2, 'C')                          #passa os parametros para criar os textos

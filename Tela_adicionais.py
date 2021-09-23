@@ -1,5 +1,6 @@
 import pygame
 from Constantes import *
+from game_screen_1 import renderiza_texto, carrega_background
 pygame.init()
 
 def tela_das_hist(janela, assets):
@@ -7,13 +8,10 @@ def tela_das_hist(janela, assets):
     #variavel para controlar o FPS
     clock = pygame.time.Clock()
     #Carrega o background inicial
-    BACKGROUND = assets["INTRO_HIST"]
-    BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-    BACKGROUND_RECT = BACKGROUND.get_rect()
+    BACKGROUND, BACKGROUND_RECT = carrega_background("INTRO_HIST", assets)
     #Fonte para escrita na tela
-    fonte = pygame.font.Font('freesansbold.ttf', 32)
-    texto_passar_diag = fonte.render("Para passar o dialogo aperte p (uma vez)", True, RED)
-    texto_pular_tela = fonte.render("Para pular a historia, aperte ESC", True, RED)
+    texto_passar_diag = renderiza_texto("Para passar o dialogo aperte p (uma vez)", RED, 32)
+    texto_pular_tela = renderiza_texto("Para pular a historia, aperte ESC", RED, 32)
     #Contador para as telas
     i = 0
     #loop da tela
@@ -33,39 +31,25 @@ def tela_das_hist(janela, assets):
                     return GAME
         #primeira tela
         if i == 1:
-            BACKGROUND = assets["PRIMEIRA_HIST"]
-            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-            BACKGROUND_RECT = BACKGROUND.get_rect()
+            BACKGROUND, BACKGROUND_RECT = carrega_background("PRIMEIRA_HIST", assets)
         #segunda tela
         elif i == 2:
-            BACKGROUND = assets["SEGUNDA_HIST"]
-            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-            BACKGROUND_RECT = BACKGROUND.get_rect()
+            BACKGROUND, BACKGROUND_RECT = carrega_background("SEGUNDA_HIST", assets)
         #Terceira tela
         elif i == 3:
-            BACKGROUND = assets["TERCEIRA_HIST"]
-            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-            BACKGROUND_RECT = BACKGROUND.get_rect()
+            BACKGROUND, BACKGROUND_RECT = carrega_background("TERCEIRA_HIST", assets)
         #Quarta tela
         elif i == 4:
-            BACKGROUND = assets["QUARTA_HIST"]
-            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-            BACKGROUND_RECT = BACKGROUND.get_rect()
+            BACKGROUND, BACKGROUND_RECT = carrega_background("QUARTA_HIST", assets)
         #Quinta tela
         elif i == 5:
-            BACKGROUND = assets["QUINTA_HIST"]
-            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-            BACKGROUND_RECT = BACKGROUND.get_rect()
+            BACKGROUND, BACKGROUND_RECT = carrega_background("QUINTA_HIST", assets)
         #Sexta tela
         elif i == 6:
-            BACKGROUND = assets["SEXTA_HIST"]
-            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-            BACKGROUND_RECT = BACKGROUND.get_rect()
+            BACKGROUND, BACKGROUND_RECT = carrega_background("SEXTA_HIST", assets)
         #Ultima tela
         elif i == 7:
-            BACKGROUND = assets["SETIMA_HIST"]
-            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-            BACKGROUND_RECT = BACKGROUND.get_rect()
+            BACKGROUND, BACKGROUND_RECT = carrega_background("SETIMA_HIST", assets)
         #Vai para o jogo
         elif i == 8:
             return GAME
@@ -86,13 +70,10 @@ def tela_final(janela, assets):
     #variavel para controlar o FPS
     clock = pygame.time.Clock()
     #Carrega o background inicial
-    BACKGROUND = assets["FINAL_1"]
-    BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-    BACKGROUND_RECT = BACKGROUND.get_rect()
+    BACKGROUND, BACKGROUND_RECT = carrega_background("FINAL_1", assets)
     #Fonte para escrita na tela
-    fonte = pygame.font.Font('freesansbold.ttf', 32)
-    texto_passar_diag = fonte.render("Para passar o dialogo aperte p (uma vez)", True, RED)
-    texto_pular_tela = fonte.render("Para sair, aperte ESC", True, RED)
+    texto_passar_diag = renderiza_texto("Para passar o dialogo aperte p (uma vez)", RED, 32)
+    texto_pular_tela = renderiza_texto("Para sair, aperte ESC", RED, 32)
     #Tempo que começa
     começo = pygame.time.get_ticks()
     #Limpa os grupos da tela passada.
@@ -118,14 +99,10 @@ def tela_final(janela, assets):
                     state = QUIT
         #primeira tela
         if i == 1:
-            BACKGROUND = assets["FINAL_2"]
-            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-            BACKGROUND_RECT = BACKGROUND.get_rect()
+            BACKGROUND, BACKGROUND_RECT = carrega_background("FINAL_2", assets)
         #Tela final
         elif i == 2:
-            BACKGROUND = assets["TELA_FINAL"]
-            BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-            BACKGROUND_RECT = BACKGROUND.get_rect()
+            BACKGROUND, BACKGROUND_RECT = carrega_background("TELA_FINAL", assets)
         #desenha os elementos na tela.
         janela.fill(BLACK)
         janela.blit(BACKGROUND, BACKGROUND_RECT)
@@ -134,6 +111,6 @@ def tela_final(janela, assets):
         #Tira as instruções da tela
         if (now - começo) < 7000: 
             janela.blit(texto_passar_diag, (400,0))
-            janela.blit(texto_pular_tela,(400, 50))
+            janela.blit(texto_pular_tela, (400, 50))
         pygame.display.flip()
     return state

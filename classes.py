@@ -4,23 +4,31 @@ from random import choice
 pygame.init()
 pygame.mixer.init()
 
+
+class Unidade(pygame.sprite.Sprite):
+    def __init__(self, assets, img, width, height):
+        pygame.sprite.Sprite.__init__(self)
+        self.assets = assets
+        self.lives = VIDA_BASICA
+        self.image = pygame.transform.scale(img, (width, height))
+        self.imgs = {
+            RIGHT: self.image,
+            LEFT: pygame.transform.flip(self.image, True, False),
+        }
+        self.rect = self.image.get_rect()
+
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, assets, grupos_plataformas):
         pygame.sprite.Sprite.__init__(self)
-        #carrega a imagem e configura ela
-        self.assets = assets
-        img = pygame.transform.scale(assets['PLAYER_IMG'], (PLAYER_WIDTH ,PLAYER_HEIGHT))
-        self.imgs = {
-            RIGHT: img,
-            LEFT: pygame.transform.flip(img, True, False),
-        }
+        Unidade.__init__(self, assets, assets["PLAYER_IMG"], PLAYER_WIDTH, PLAYER_HEIGHT)
         #Plataformas
         self.plataforms = grupos_plataformas
         #define o lado que esta olhando
         self.facing_way = RIGHT
         #atualiza imagem
         self.image = self.imgs[self.facing_way]
-        self.rect =  img.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = GROUND
         #Maior altura alcançada pelo personagem, começa com a parte de baixo
@@ -42,8 +50,8 @@ class Player(pygame.sprite.Sprite):
         self.blue_cooldown = 10000
         self.last_damage = 0
         self.damage_cooldown = 500
-        #Vida inicial do player
-        self.lives = 2000
+        #Vida inicial do player (player tem mais que inimigos)
+        self.lives = self.lives * 100
     def update(self):
         #Atualiza a imagem para a direção em que está olhando
         self.image = self.imgs[self.facing_way]
@@ -114,7 +122,7 @@ class Player(pygame.sprite.Sprite):
         self.move = 1                   #muda o etado do move para direita
         self.facing_way = RIGHT
         self.teclad = 1                 #muda o estado da teclad para True
-    #metodo para andar pra esquerda
+   
     def stop_walk_right(self):
         """Método para o personagem parar de andar para direita"""
         self.teclad = 0                 #muda o estado da teclad para False
@@ -203,15 +211,7 @@ class Magias(pygame.sprite.Sprite):
 class Inimigos(pygame.sprite.Sprite):
     def __init__(self, img, assets, x, y , player, Plataformas):
         pygame.sprite.Sprite.__init__(self)
-        #Muda a imagem pro tamanho do inimigo e pega o retangulo dela.
-        self.assets = assets #recebe assets
-        img = pygame.transform.scale(img, (ENEMIES_WIDTH, ENEMIES_HEIGHT))
-        self.rect = img.get_rect()
-        #Pode virar para direita e para esquerda
-        self.imgs = {
-            RIGHT: img,
-            LEFT: pygame.transform.flip(img, True, False),
-        }
+        Unidade.__init__(self, assets, assets["ENEMIES_IMG"], ENEMIES_WIDTH, ENEMIES_HEIGHT)
         #Olha para direita por padrão
         self.facing_way = RIGHT
         #vira a imagem para onde está olhando
@@ -226,8 +226,6 @@ class Inimigos(pygame.sprite.Sprite):
         self.speedx = 0
         #passa o player para os inimigos
         self.player = player
-        #Vida dos inimigos
-        self.lives = 20
         #Estado inicial
         self.state = STILL
         #Cooldown da magia do inimigo
@@ -326,17 +324,13 @@ class Inimigos(pygame.sprite.Sprite):
 class Gauss(pygame.sprite.Sprite):
     def __init__(self, img, assets, player):
         pygame.sprite.Sprite.__init__(self)
+        Unidade.__init__(self, assets, assets["GAUSS"], GAUSS_WIDTH, GAUSS_HEIGHT)
         #imagem e localizacao
-        img = pygame.transform.scale(img, (GAUSS_WIDTH, GAUSS_HEIGHT))
         self.player = player
-        self.image = img
-        self.rect = img.get_rect()
         self.rect.bottom = GROUND
         self.rect.right = WIDTH
-        #Salva os assets
-        self.assets = assets
         #Numero de vidas iniciais
-        self.lives = 2000
+        self.lives = self.lives * 100
         #Cooldown
         self.last_attack = 0
         self.attack_cd = 3000
@@ -455,15 +449,8 @@ class Plataform(pygame.sprite.Sprite):
 class Fantasma(pygame.sprite.Sprite):
     def __init__(self, assets, player):
         pygame.sprite.Sprite.__init__(self)
+        Unidade.__init__(self, assets, assets["FANTASMA_ATACANDO"][0], GHOST_WIDTH, GHOST_HEIGHT)
         #Adiciona a primeira imagem
-        self.assets = assets
-        img = assets["FANTASMA_ATACANDO"][0]
-        self.imgs = {
-        RIGHT: pygame.transform.flip(img, True, False),
-        LEFT: img,
-        }
-        self.image = img
-        self.rect = self.image.get_rect()
         self.rect.bottom = GROUND
         #Coloca a direção que o personagem está olhando
         self.facing_way = LEFT
@@ -479,7 +466,7 @@ class Fantasma(pygame.sprite.Sprite):
         self.attack_cd = 3000
         self.last_attack = 0
         #Vidas iniciais do fantasma
-        self.lives = 220
+        self.lives = self.lives * 10
     def update(self):
         if self.state == STILL:
             #Atualiza a direção da imagem
