@@ -1,6 +1,7 @@
 import pygame
 from classes import *
 import random
+from Constantes import *
 pygame.mixer.pre_init(44100, 16, 2, 4096)
 pygame.init()
 pygame.mixer.init()
@@ -43,27 +44,41 @@ def load_assets():
         file_name = f"assets\Img\Fantasminha\Ghost_{i}.png"
         img = pygame.image.load(file_name).convert_alpha()
         img = pygame.transform.scale(img, (GHOST_WIDTH, GHOST_HEIGHT))
+        img = pygame.transform.flip(img, True, False)
         fantasma_atacando.append(img)
     assets["FANTASMA_ATACANDO"] = fantasma_atacando
     return assets
 
-def game_screen(janela,assets):  #funcao para a janela do jogo
-    """Função para a primeira tela da primeira fase do jogo, retorna o proximo estado do jogo"""
-    #Musica de fundo
-    pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')
+
+def renderiza_texto(texto, cor, tamanho_fonte):
+    fonte = pygame.font.Font('freesansbold.ttf', tamanho_fonte)
+    return fonte.render(texto, True, cor)
+
+
+def carrega_musica(path):
+    pygame.mixer.music.load(path)
     pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(loops=-1)
-    #variavel para controlar o FPS
-    clock = pygame.time.Clock()
-    #Define a fonte para a escrita na tela
-    fonte = pygame.font.Font('freesansbold.ttf', 32)
-    fonte_2 = pygame.font.Font('freesansbold.ttf', 25)
-    texto_Barra_de_vida = fonte.render("Vida", True, RED)        
-    texto_passagem_tela = fonte_2.render("Para passar de tela, aperte o p", True, RED)
-    #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
-    BACKGROUND = assets["HIMALAIA_IMG"]
+
+
+def carrega_background(img_path, assets):
+    BACKGROUND = assets[img_path]
     BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
     BACKGROUND_RECT = BACKGROUND.get_rect()
+    return BACKGROUND, BACKGROUND_RECT
+
+
+def game_screen(janela, assets):  #funcao para a janela do jogo
+    """Função para a primeira tela da primeira fase do jogo, retorna o proximo estado do jogo"""
+    #Musica de fundo
+    carrega_musica('assets/Sounds/Musica_loop.mp3')
+    #variavel para controlar o FPS
+    clock = pygame.time.Clock()
+    # Renderiza o texto para ser usado no loop da fase.
+    texto_Barra_de_vida = renderiza_texto("Vida", RED, 32)
+    texto_passagem_tela = renderiza_texto("Para passar de tela, aperte o p", RED, 25)
+    #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
+    BACKGROUND, BACKGROUND_RECT = carrega_background("HIMALAIA_IMG", assets)
     player = Player(assets, all_plataforms)
     #Cria a barra de vida
     barra_de_vida = Life_bar(20, 35, player)
@@ -128,11 +143,11 @@ def game_screen(janela,assets):  #funcao para a janela do jogo
         hits_blue_fire_enemies = pygame.sprite.groupcollide(all_enemies,all_blue_fire_magic, False, True)
         #hits_enemie_player = pygame.sprite.groupcollide(all_players, all_enemies, False, False)   #Inativo, o player toma dano apenas de tiros
         for enemie in hits_fire_enemies:
-            enemie.lives -= 10
+            enemie.lives -= DAMAGE_FIRESPELL
             if enemie.lives <=0:
                 enemie.kill()
         for enemie in hits_blue_fire_enemies:
-            enemie.lives -= 20
+            enemie.lives -= DAMAGE_BLUESPELL
             if enemie.lives <=0:
                 enemie.kill()
         if player.lives <= 0:
@@ -158,20 +173,14 @@ def game_screen(janela,assets):  #funcao para a janela do jogo
 def game_screen_2(janela,assets):
     """Funcao para a segunda tela da primeira fase do jogo, retorna o proximo estado do jogo"""
     #Musica de fundo
-    pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')
-    pygame.mixer.music.set_volume(0.2)
-    pygame.mixer.music.play(loops=-1)
+    carrega_musica('assets/Sounds/Musica_loop.mp3')
     #variavel para controlar o FPS
     clock = pygame.time.Clock()
     #Define a fonte para a escrita na tela
-    fonte = pygame.font.Font('freesansbold.ttf', 32)
-    fonte_2 = pygame.font.Font('freesansbold.ttf', 25)
-    texto_Barra_de_vida = fonte.render("Vida", True, RED)        
-    texto_passagem_tela = fonte_2.render("Para passar de tela, aperte o p", True, RED)
+    texto_Barra_de_vida = renderiza_texto("Vida", RED, 32)
+    texto_passagem_tela = renderiza_texto("Para passar de tela, aperte o p", RED, 25)
     #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
-    BACKGROUND = assets["MONTANHA_IMG"]
-    BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-    BACKGROUND_RECT = BACKGROUND.get_rect()
+    BACKGROUND, BACKGROUND_RECT = carrega_background("MONTANHA_IMG", assets)
     player = Player(assets, all_plataforms)
     #Esvazia os grupos anteriores e cria os novos.
     all_plataforms.empty()
@@ -239,11 +248,11 @@ def game_screen_2(janela,assets):
         hits_fire_enemies = pygame.sprite.groupcollide(all_enemies,all_fire_magic, False, True)
         hits_blue_fire_enemies = pygame.sprite.groupcollide(all_enemies,all_blue_fire_magic, False, True)
         for enemie in hits_fire_enemies:
-            enemie.lives -= 10
+            enemie.lives -= DAMAGE_FIRESPELL
             if enemie.lives <=0:
                 enemie.kill()
         for enemie in hits_blue_fire_enemies:
-            enemie.lives -= 20
+            enemie.lives -= DAMAGE_BLUESPELL
             if enemie.lives <=0:
                 enemie.kill()
         if player.lives <= 0:
@@ -268,20 +277,14 @@ def game_screen_2(janela,assets):
 def game_screen_3(janela, assets):  
     """Função para a terceira tela do jogo, onde o player enfrenta um mini boss, o fantasminha"""
     #Musica de fundo
-    pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')
-    pygame.mixer.music.set_volume(0.2)
-    pygame.mixer.music.play(loops=-1)
+    carrega_musica('assets/Sounds/Musica_loop.mp3')
     #variavel para controlar o FPS
     clock = pygame.time.Clock()
     #Define a fonte para a escrita na tela
-    fonte = pygame.font.Font('freesansbold.ttf', 32)
-    fonte_2 = pygame.font.Font('freesansbold.ttf', 25)
-    texto_Barra_de_vida = fonte.render("Vida", True, RED)        
-    texto_passagem_tela = fonte_2.render("Para passar de tela, aperte o p", True, RED)
+    texto_Barra_de_vida = renderiza_texto("Vida", RED, 32)
+    texto_passagem_tela = renderiza_texto("Para passar de tela, aperte o p", RED, 25)
     #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
-    BACKGROUND = assets["FUNDO_ASSOMBRADO"]
-    BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-    BACKGROUND_RECT = BACKGROUND.get_rect()
+    BACKGROUND, BACKGROUND_RECT = carrega_background("FUNDO_ASSOMBRADO", assets)
     player = Player(assets, all_plataforms)
     #Esvazia os grupos anteriores e cria os novos.
     all_plataforms.empty()
@@ -295,11 +298,11 @@ def game_screen_3(janela, assets):
     fantasma = Fantasma(assets, player)
     all_sprites.add(fantasma)
     all_enemies.add(fantasma)
-    #Cria as plataformas
-    #posicoes possiveis da parte esquerda da plataforma e parte superior da plataforma.
+    # Cria as plataformas
+    # Posicoes possiveis da parte esquerda da plataforma e parte superior da plataforma.
     pos_x = [300, (300 + PLATAFORM_WIDTH + 20)]
     pos_y = [ (GROUND - WIDTH//5) , ((GROUND - WIDTH//2.5))]
-    #Criação das plataformas
+    # Criação das plataformas
     for posição_x in pos_x:
         for posição_y in pos_y: 
             plataformas = Plataform(assets["PLATAFORM_IMG"], posição_x, posição_y)
@@ -346,11 +349,11 @@ def game_screen_3(janela, assets):
         hits_fire_enemies = pygame.sprite.groupcollide(all_enemies,all_fire_magic, False, True)
         hits_blue_fire_enemies = pygame.sprite.groupcollide(all_enemies,all_blue_fire_magic, False, True)
         for enemie in hits_fire_enemies:
-            enemie.lives -= 10
+            enemie.lives -= DAMAGE_FIRESPELL
             if enemie.lives <=0:
                 enemie.kill()
         for enemie in hits_blue_fire_enemies:
-            enemie.lives -= 20
+            enemie.lives -= DAMAGE_BLUESPELL
             if enemie.lives <=0:
                 enemie.kill()
         if player.lives <= 0:
@@ -376,20 +379,14 @@ def game_screen_4(janela,assets):
     """Função para a terceira parte da primeira fase do jogo, 
     onde há a luta com o boss e retorna o proximo estado do jogo"""
     #Musica de fundo
-    pygame.mixer.music.load('assets/Sounds/Musica_loop.mp3')
-    pygame.mixer.music.set_volume(0.2)
-    pygame.mixer.music.play(loops=-1)
+    carrega_musica('assets/Sounds/Musica_loop.mp3')
     #variavel para controlar o FPS
     clock = pygame.time.Clock()
     #Define a fonte para a escrita na tela
-    fonte = pygame.font.Font('freesansbold.ttf', 32)
-    fonte_2 = pygame.font.Font('freesansbold.ttf', 27)
-    texto_Barra_de_vida = fonte.render("Vida", True, RED)
-    texto_Barra_de_vida_gauss = fonte_2.render("Gauss, o grande", True, WHITE)
+    texto_Barra_de_vida = renderiza_texto("Vida", RED, 32)
+    texto_Barra_de_vida_gauss = renderiza_texto("Gauss, o grande", WHITE, 27)
     #cria o player com a imagem do personagem e carrega a imagem do plano de fundo
-    BACKGROUND = assets["TEMPLO_GAUSS_IMG"]
-    BACKGROUND = pygame.transform.scale(BACKGROUND, (WIDTH, HEIGHT))
-    BACKGROUND_RECT = BACKGROUND.get_rect()
+    BACKGROUND, BACKGROUND_RECT = carrega_background("TEMPLO_GAUSS_IMG", assets)
     player = Player(assets, all_plataforms)
     #Cria a barra de vida do player
     barra_de_vida = Life_bar(20, 35, player)
@@ -406,7 +403,7 @@ def game_screen_4(janela,assets):
     #Cria as plataformas
     #posicoes possiveis da parte esquerda da plataforma e parte superior da plataforma.
     pos_x = [200, (200 + PLATAFORM_WIDTH + 20)]
-    pos_y = [ (GROUND - WIDTH//5) , ((GROUND - WIDTH//2.5))]
+    pos_y = [(GROUND - WIDTH//5) , ((GROUND - WIDTH//2.5))]
     #Criação das plataformas
     for posição_x in pos_x:
         for posição_y in pos_y: 
@@ -445,10 +442,10 @@ def game_screen_4(janela,assets):
         #Hits das magias do player em gauss
         hits_fire_gauss = pygame.sprite.spritecollide(gauss, all_fire_magic, True)
         for hit in hits_fire_gauss:
-            gauss.lives -= 50
+            gauss.lives -= DAMAGE_FIRESPELL * 5
         hits_blue_fire_gauss = pygame.sprite.spritecollide(gauss, all_blue_fire_magic, True)
         for hit in hits_blue_fire_gauss:
-            gauss.lives -= 150  
+            gauss.lives -= DAMAGE_BLUESPELL * 5  
         #Gauss tenta atirar a cada passagem do loop, mas há um cooldown em seus ataques 
         gauss.ataque_normal()
         gauss.ataque_especial()
